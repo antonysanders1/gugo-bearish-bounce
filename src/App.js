@@ -33,29 +33,6 @@ import {
 } from "./globalState/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import { auth, db } from "./config/firebaseConfig";
-import {
-  AccountBox,
-  AdminPanelSettings,
-  Business,
-  Collections,
-  CreditCard,
-  Folder,
-  QueryStats,
-  Settings,
-  TripOrigin,
-  Support,
-  Workspaces,
-  Assessment,
-  TableChart,
-  StackedBarChart,
-  BackupTable,
-  Ballot,
-  Dashboard,
-  Leaderboard,
-  EditNote,
-  HelpCenter,
-  Favorite,
-} from "@mui/icons-material";
 import { theme as defaultTheme } from "./Theme";
 import Toast from "./components/Toast";
 import SplashScreen from "./views/SplashScreen";

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Close } from "@mui/icons-material";
+import { MdOutlineClose } from "react-icons/md";
 import { Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { MainContext } from "../App";
@@ -80,7 +80,7 @@ const Toast = () => {
           padding: "10px 20px",
         }}
       >
-        <Close
+        <MdOutlineClose 
           style={{
             position: "absolute",
             top: "50%",

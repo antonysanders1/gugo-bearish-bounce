@@ -1,10 +1,8 @@
 import * as React from "react";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-import FolderIcon from "@mui/icons-material/Folder";
-import RestoreIcon from "@mui/icons-material/Restore";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { MdFolder, MdRestore, MdFavoriteBorder, MdLocationPin   } from "react-icons/md";
+
 
 export default function MobileNavBar({ userData, navigate }) {
   const [value, setValue] = React.useState("recents");
@@ -18,22 +16,22 @@ export default function MobileNavBar({ userData, navigate }) {
       <BottomNavigationAction
         label="Recents"
         value="recents"
-        icon={<RestoreIcon />}
+        icon={<MdRestore />}
       />
       <BottomNavigationAction
         label="Favorites"
         value="favorites"
-        icon={<FavoriteIcon />}
+        icon={<MdFavoriteBorder />}
       />
       <BottomNavigationAction
         label="Nearby"
         value="nearby"
-        icon={<LocationOnIcon />}
+        icon={<MdLocationPin />}
       />
       <BottomNavigationAction
         label="Folder"
         value="folder"
-        icon={<FolderIcon />}
+        icon={<MdFolder />}
       />
     </BottomNavigation>
   );
