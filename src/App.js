@@ -69,6 +69,9 @@ function App() {
     message,
     setMessage,
     defaultTheme,
+    dispatch,
+    userData,
+    navigate
   };
 
   useEffect(() => {
