@@ -71,7 +71,8 @@ function App() {
     defaultTheme,
     dispatch,
     userData,
-    navigate
+    navigate,
+    deviceType
   };
 
   useEffect(() => {
