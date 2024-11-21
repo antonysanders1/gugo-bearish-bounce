@@ -40,7 +40,9 @@ export const theme = {
       dark: "#606060",
     },
   },
-  fontFamily: "Raleway, Arial",
+  typography: {
+    fontFamily: "Raleway, Arial",
+  }
 };
 
 // {

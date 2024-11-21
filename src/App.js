@@ -105,7 +105,7 @@ function App() {
             <Grid item container xs={12} style={{ height: "100%" }}>
               {/* Other Components Here */}
 
-              <Grid item container xs={12} style={{ height: 60, zIndex: 1 }}>
+              <Grid item container xs={12} style={{ height: 60, zIndex: 2 }}>
                 <MenuBar navigate={navigate} />
               </Grid>
 
