@@ -17,7 +17,7 @@ const Toast = () => {
     defaultTheme,
   } = useContext(MainContext);
 
-  console.log(success, setSuccess);
+  // console.log(success, setSuccess);
 
   const getBackgroundColor = () => {
     if (success) {

@@ -26,7 +26,7 @@ const SplashScreen = () => {
     >
       <motion.div
         animate={{ opacity: 1, top: "50%" }}
-        transition={{ duration: 0.5, delay: 0.5 }}
+        transition={{ duration: 1.5, delay: 0.5 }}
         style={{
           position: "absolute",
           top: "80%",
@@ -64,7 +64,7 @@ const SplashScreen = () => {
       </motion.div>
       <motion.p
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1 }}
+        transition={{ duration: 1.5, delay: 1 }}
         variant="caption"
         style={{
           position: "absolute",
