@@ -130,11 +130,11 @@ function App() {
                 </Routes>
               </Grid>
 
-              {/* {deviceType === "mobile" && (
+              {deviceType === "mobile" && (
                 <Grid item container xs={12} style={{ height: 60, zIndex: 1 }}>
                   <MobileNavBar userData={userData} navigate={navigate} />
                 </Grid>
-              )} */}
+              )}
             </Grid>
           )}
         </div>
