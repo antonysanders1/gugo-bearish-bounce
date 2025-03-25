@@ -19,7 +19,7 @@
     "cors": "^2.8.5",
     "dom-to-image": "^2.6.0",
     "dotenv": "^16.4.5",
-    "firebase": "^10.12.1",
+    "firebase": "^11.5.0",
     "framer-motion": "^11.2.5",
     "generate-password": "^1.7.1",
     "openai": "^4.47.1",
