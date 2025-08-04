@@ -1,62 +1,72 @@
 import { createTheme } from "@mui/material/styles";
 
 export const theme = {
-  palette: {
-    primary: {
-      main: "#42a5f5",
-      dark: "#90caf9",
-      light: "#e3f2fd",
+    palette: {
+        primary: {
+            main: "#53B24F", // forest green
+            dark: "#3B8539", // deeper foliage
+            light: "#91E081", // leaf highlights
+        },
+        secondary: {
+            main: "#F4A940", // earthy orange (duck's beak/feet)
+            dark: "#B96E1E",
+            light: "#FFD79A",
+        },
+        tirciary: {
+            main: "#76462E", // tree bark brown
+            dark: "#4B2F1D",
+            light: "#A47151",
+        },
+        text: {
+            main: "#1A1A1A", // dark neutral
+            dark: "#000000",
+            light: "#FFFFFF",
+        },
+        border: {
+            main: "#FFE285", // highlight for UI edges
+            dark: "#C8A400",
+            light: "#FFF7C7",
+        },
+        error: {
+            main: "#D32F2F",
+            dark: "#9A0007",
+            light: "#FF6659",
+        },
+        warning: {
+            main: "#FFA000",
+            dark: "#C67100",
+            light: "#FFECB3",
+        },
+        info: {
+            main: "#29B6F6", // accent for buttons or UI
+            dark: "#0288D1",
+            light: "#B3E5FC",
+        },
+        success: {
+            main: "#66BB6A",
+            dark: "#338a3e",
+            light: "#C8E6C9",
+        },
+        black: "#000000",
+        white: "#FFFFFF",
+        grey: {
+            main: "#8C8C8C",
+            light: "#DADADA",
+            dark: "#5C5C5C",
+        },
     },
-    secondary: {
-      main: "#ab47bc",
-      dark: "#ce93d8",
-      light: "#f3e5f5",
+    typography: {
+        fontFamily: `"Poppins", sans-serif`,
     },
-    error: {
-      main: "#f44336",
-      dark: "#d32f2f",
-      light: "#e57373",
+    zIndex: {
+        mobileStepper: 1000,
+        fab: 1050,
+        speedDial: 1050,
+        appBar: 1100,
+        drawer: 1200,
+        modal: 1300,
+        snackbar: 1400,
+        tooltip: 1500,
+        toast: 9999,
     },
-    warning: {
-      main: "#ff9800",
-      dark: "#f57c00",
-      light: "#ffe082",
-    },
-    info: {
-      main: "#2196f3",
-      dark: "#1976d2",
-      light: "#90caf9",
-    },
-    success: {
-      main: "#4caf50",
-      dark: "#2e7d32",
-      light: "#c8e6c9",
-    },
-    black: "#000000",
-    white: "#ffffff",
-    grey: {
-      main: "#808080",
-      light: "#d3d3d3",
-      dark: "#606060",
-    },
-  },
-  typography: {
-    fontFamily: "Raleway, Arial",
-  }
 };
-
-// {
-//   colors: {
-//     primary: "",
-//     secondary: "",
-//     accent: "",
-//     black: "#000000",
-//     grey: "#ebebeb",
-//     white: "#ffffff",
-//     error: "#d40000",
-//     success: "#00c133",
-//     warning: "#ffa600",
-//     info: "#00b1ff",
-//   },
-//   font: "",
-// };

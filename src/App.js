@@ -105,36 +105,20 @@ function App() {
             <Grid item container xs={12} style={{ height: "100%" }}>
               {/* Other Components Here */}
 
-              <Grid item container xs={12} style={{ height: 60, zIndex: 2 }}>
-                <MenuBar navigate={navigate} />
-              </Grid>
-
               <Grid
                 item
                 container
                 xs={12}
-                style={{ height: "calc(100dvh - 60px)", zIndex: 1 }}
+                style={{ height: "100dvh", zIndex: 1 }}
               >
                 <Routes>
                   <Route path="/" element={<HomeScreen />} />
-                  <Route
-                    path="/login"
-                    element={<AuthScreen isLogin={true} />}
-                  />
-                  <Route
-                    path="/register"
-                    element={<AuthScreen isLogin={false} />}
-                  />
                   <Route path="/about" element={<AboutScreen />} />
                   <Route path="/contact" element={<ContactScreen />} />
                 </Routes>
               </Grid>
 
-              {deviceType === "mobile" && (
-                <Grid item container xs={12} style={{ height: 60, zIndex: 1 }}>
-                  <MobileNavBar userData={userData} navigate={navigate} />
-                </Grid>
-              )}
+             
             </Grid>
           )}
         </div>
