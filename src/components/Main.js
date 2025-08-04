@@ -1,7 +1,7 @@
 // /src/Main.jsx
 import React, { useState, useCallback, useEffect, useContext } from "react";
 import { Box, Button, Typography, LinearProgress } from "@mui/material";
-import GameContainer from "./components/GameContainer";
+import GameContainer from "./GameContainer";
 import {
   useLoginWithAbstract,
   useAbstractClient,
@@ -11,11 +11,11 @@ import { parseEther } from "viem";
 import { AnimatePresence, motion } from "framer-motion";
 import UsernameModal from "./game/UsernameModal";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../@shared/firebase/config";
+import { db } from "../config/firebaseConfig";
 import Leaderboard from "./game/Leaderboard";
 import PRModal from "./game/PRModal";
 import confetti from "canvas-confetti";
-import { MainContext } from "../../App";
+import { MainContext } from "../App";
 
 function Main() {
   const {Theme} = useContext(MainContext)
@@ -207,7 +207,7 @@ function Main() {
       }}
     >
       <img 
-      src={require('./main-bg.png')}
+      src={require('../assets/main-bg.png')}
       alt=''
       style={{
         position: 'absolute',

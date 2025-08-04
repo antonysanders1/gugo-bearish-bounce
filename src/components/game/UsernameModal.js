@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../../@shared/firebase/config";
+import { db } from "../../config/firebaseConfig";
 
 const UsernameModal = ({ walletAddress, score, onComplete, styles }) => {
   const [username, setUsername] = useState("");

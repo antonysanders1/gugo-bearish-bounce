@@ -44,12 +44,16 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.3.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.4.0",
     "react-scripts": "5.0.1",
     "react-sprite-animator": "^2.0.2",
+    "redux": "^5.0.1",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^3.1.0",
     "stripe": "^18.1.0",
     "viem": "^2.33.1",
-    "wagmi": "^2.16.0",
+    "wagmi": "^2.16.1",
     "web-vitals": "^2.1.4",
     "zustand": "^5.0.3"
   },
@@ -58,7 +62,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-     "deploy:dev": "react-scripts build && firebase deploy --only hosting:dev",
+    "deploy:dev": "react-scripts build && firebase deploy --only hosting:dev",
     "deploy:prod": "react-scripts build && firebase deploy --only hosting:prod"
   },
   "eslintConfig": {

@@ -33,7 +33,7 @@ import {
 } from "./globalState/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import { auth, db } from "./config/firebaseConfig";
-import { theme as defaultTheme } from "./Theme";
+import { theme as Theme } from "./Theme";
 import Toast from "./components/Toast";
 import SplashScreen from "./views/SplashScreen";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -68,7 +68,7 @@ function App() {
     setInfo,
     message,
     setMessage,
-    defaultTheme,
+    Theme,
     dispatch,
     userData,
     navigate,
@@ -88,7 +88,7 @@ function App() {
 
   return (
     <MainContext.Provider value={values}>
-      <ThemeProvider theme={createTheme(defaultTheme)}>
+      <ThemeProvider theme={createTheme(Theme)}>
         <div
           className="App"
           style={{

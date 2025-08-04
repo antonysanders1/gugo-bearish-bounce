@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
-import { db } from "../../../@shared/firebase/config";
+import { db } from "../../config/firebaseConfig";
 import { motion } from "framer-motion";
 
 const testPlayers = [

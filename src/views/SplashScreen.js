@@ -5,7 +5,7 @@ import { Grid, Typography } from "@mui/material";
 import { MainContext } from "../App";
 
 const SplashScreen = () => {
-  const { defaultTheme } = useContext(MainContext);
+  const { Theme } = useContext(MainContext);
 
   return (
     <Grid
@@ -57,7 +57,7 @@ const SplashScreen = () => {
         </Typography> */}
         <Typography
           variant="caption"
-          style={{ color: defaultTheme.palette.black, marginTop: 20 }}
+          style={{ color: Theme.palette.black, marginTop: 20 }}
         >
           SUB TEXT HERE
         </Typography>
@@ -71,7 +71,7 @@ const SplashScreen = () => {
           left: "50%",
           bottom: "5%",
           transform: "translate(-50%, 0%)",
-          color: defaultTheme.palette.black,
+          color: Theme.palette.black,
           opacity: 0,
           fontSize: ".75rem",
         }}

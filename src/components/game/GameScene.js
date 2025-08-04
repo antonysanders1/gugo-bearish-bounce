@@ -1,20 +1,20 @@
 import Phaser from "phaser";
-import bearishBear from "../bear-sprite.png";
-import platforms from "../platform-sprite.png";
-import trees from "../backgrounds_0001_trees.png";
-import sky from "../backgrounds_0000_sky.png";
-import space from "../backgrounds_0002_space.png";
-import righttreeBranch from "../righttreebranch.png";
-import lefttreeBranch from "../lefttreebranch.png";
-import cloud1 from "../clouds.png"; // or whichever cloud image you’re using
-import fallingItemsprite from "../falling-items.png"; // or whichever cloud image you’re using
-import babies from "../babys.png"; // or whichever cloud image you’re using
-import jumpsound from "../jump.mp3"; // or whichever cloud image you’re using
-import landsound from "../land.mp3"; // or whichever cloud image you’re using
-import fallingitem from "../fallingitem.mp3";
-import collectbaby from "../collectduck.mp3";
-import anvilsound from "../anvilsound.mp3";
-import combosound from "../combosound.mp3";
+import bearishBear from "../../assets/bear-sprite.png";
+import platforms from "../../assets/platform-sprite.png";
+import trees from "../../assets/backgrounds_0001_trees.png";
+import sky from "../../assets/backgrounds_0000_sky.png";
+import space from "../../assets/backgrounds_0002_space.png";
+import righttreeBranch from "../../assets/righttreebranch.png";
+import lefttreeBranch from "../../assets/lefttreebranch.png";
+import cloud1 from "../../assets/clouds.png"; // or whichever cloud image you’re using
+import fallingItemsprite from "../../assets/falling-items.png"; // or whichever cloud image you’re using
+import babies from "../../assets/babys.png"; // or whichever cloud image you’re using
+import jumpsound from "../../assets/jump.mp3"; // or whichever cloud image you’re using
+import landsound from "../../assets/land.mp3"; // or whichever cloud image you’re using
+import fallingitem from "../../assets/fallingitem.mp3";
+import collectbaby from "../../assets/collectduck.mp3";
+import anvilsound from "../../assets/anvilsound.mp3";
+import combosound from "../../assets/combosound.mp3";
 
 export default class GameScene extends Phaser.Scene {
   constructor() {

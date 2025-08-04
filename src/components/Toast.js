@@ -14,32 +14,32 @@ const Toast = () => {
     setInfo,
     message,
     setMessage,
-    defaultTheme,
+    Theme,
   } = useContext(MainContext);
 
   // console.log(success, setSuccess);
 
   const getBackgroundColor = () => {
     if (success) {
-      return defaultTheme.palette.success.main;
+      return Theme.palette.success.main;
     } else if (error) {
-      return defaultTheme.palette.error.main;
+      return Theme.palette.error.main;
     } else if (info) {
-      return defaultTheme.palette.info.main;
+      return Theme.palette.info.main;
     } else {
-      return defaultTheme.palette.primary.main;
+      return Theme.palette.primary.main;
     }
   };
 
   const getTextColor = () => {
     if (success) {
-      return defaultTheme.palette.white;
+      return Theme.palette.white;
     } else if (error) {
-      return defaultTheme.palette.white;
+      return Theme.palette.white;
     } else if (info) {
-      return defaultTheme.palette.black;
+      return Theme.palette.black;
     } else {
-      return defaultTheme.palette.black;
+      return Theme.palette.black;
     }
   };
 
