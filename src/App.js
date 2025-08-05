@@ -56,6 +56,9 @@ function App() {
   const [info, setInfo] = useState(false);
   const [message, setMessage] = useState("Welcome!");
   const [deviceType, setDeviceType] = useState(null);
+  const [bgMusic, setBgMusic] = useState(null);
+  const [isMuted, setIsMuted] = useState(false);
+
 
   const values = {
     loading,
@@ -72,7 +75,11 @@ function App() {
     dispatch,
     userData,
     navigate,
-    deviceType
+    deviceType,
+    bgMusic,
+    setBgMusic,
+    isMuted,
+    setIsMuted
   };
 
   useEffect(() => {
@@ -118,7 +125,7 @@ function App() {
                 </Routes>
               </Grid>
 
-             
+
             </Grid>
           )}
         </div>

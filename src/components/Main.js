@@ -16,9 +16,14 @@ import Leaderboard from "./game/Leaderboard";
 import PRModal from "./game/PRModal";
 import confetti from "canvas-confetti";
 import { MainContext } from "../App";
+import musicFile from "../assets/music.mp3";
+
 
 function Main() {
-  const { Theme } = useContext(MainContext)
+  const { Theme, bgMusic,
+    setBgMusic,
+    isMuted,
+    setIsMuted } = useContext(MainContext)
   const [connectModalOpen, setConnectModalOpen] = useState(0)
   const [started, setStarted] = useState(false);
   const [health, setHealth] = useState(4);
@@ -207,6 +212,28 @@ function Main() {
         alignItems: 'center'
       }}
     >
+
+      <Button
+        onClick={() => {
+          if (bgMusic) {
+            bgMusic.muted = !isMuted;
+            setIsMuted(!isMuted);
+          }
+        }}
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          zIndex: 9999,
+          backgroundColor: "#00000088",
+          color: "white",
+          borderRadius: 50,
+          padding: "6px 12px",
+          fontWeight: 600
+        }}
+      >
+        {isMuted ? "Unmute 🔇" : "Mute 🔊"}
+      </Button>
       <img
         src={window.innerWidth < 500 ? require('../assets/mobile-bg.png') : require('../assets/main-bg.png')}
         alt=''
@@ -223,72 +250,72 @@ function Main() {
         }} />
 
 
-        {/* 🐤 Baby Duck - fade in + slide from left */}
-        <motion.img
-          src={require('../assets/main-babyduck.png')}
-          alt="baby duck"
-          initial={{ opacity: 0}}
-          animate={{ opacity: 1}}
-          transition={{ duration: 1.6, delay: .4 }}
-          style={{
-            position: 'absolute',
-            left: window.innerWidth < 500 ? '-35%' : 0,
-            top: window.innerWidth < 500 ? '6.5%' : 0,
-            width:window.innerWidth < 500 ?  'auto' : '100%',
-            height: '100%',
-            objectFit: 'cover',
-            zIndex: 0,
-            filter: started || gameOver ? 'blur(5px)' : 'none',
-          }}
-        />
-        {/* 🐻 Baby Bear - fade in + slide from left */}
-        <motion.img
-          src={require('../assets/main-bear.png')}
-          alt=""
-          initial={{ opacity: 0, y: -120 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.6, delay: .7 }}
-          style={{
-            position: 'absolute',
-            width:window.innerWidth < 500 ?  'auto' : '100%',
-            height: '100%',
-            objectFit: 'cover',
-            zIndex: 0,
-            filter: started || gameOver ? 'blur(5px)' : 'none',
-          }}
-        />
-        
-<motion.img
-  src={require('../assets/main-duck.png')}
-  alt="duck"
-   initial={{ opacity: 0, x: 120 }}
-          animate={{ opacity: 1, x: window.innerWidth < 500 ? -180: 0 }}
-  transition={{ duration: 1.5, delay: 1.2 }}
-  style={{
-    position: 'absolute',
-    width:window.innerWidth < 500 ?  'auto' : '100%',
-    height: '100%',
-    objectFit: 'cover',
-    zIndex: 0,
-    filter: started || gameOver ? 'blur(5px)' : 'none',
-  }}
-/>
+      {/* 🐤 Baby Duck - fade in + slide from left */}
+      <motion.img
+        src={require('../assets/main-babyduck.png')}
+        alt="baby duck"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.6, delay: .4 }}
+        style={{
+          position: 'absolute',
+          left: window.innerWidth < 500 ? '-35%' : 0,
+          top: window.innerWidth < 500 ? '6.5%' : 0,
+          width: window.innerWidth < 500 ? 'auto' : '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+          filter: started || gameOver ? 'blur(5px)' : 'none',
+        }}
+      />
+      {/* 🐻 Baby Bear - fade in + slide from left */}
+      <motion.img
+        src={require('../assets/main-bear.png')}
+        alt=""
+        initial={{ opacity: 0, y: -120 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.6, delay: .7 }}
+        style={{
+          position: 'absolute',
+          width: window.innerWidth < 500 ? 'auto' : '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+          filter: started || gameOver ? 'blur(5px)' : 'none',
+        }}
+      />
 
-<motion.img
-  src={require('../assets/main-bearr.png')}
-  alt=""
-   initial={{ opacity: 0, x: 120 }}
-          animate={{ opacity: 1, x: 0 }}
-  transition={{ duration: 1.4, delay: 1.2 }}
-  style={{
-    position: 'absolute',
-    width:window.innerWidth < 500 ?  'auto' : '100%',
-    height: '100%',
-    objectFit: 'cover',
-    zIndex: 0,
-    filter: started || gameOver ? 'blur(5px)' : 'none',
-  }}
-/>
+      <motion.img
+        src={require('../assets/main-duck.png')}
+        alt="duck"
+        initial={{ opacity: 0, x: 120 }}
+        animate={{ opacity: 1, x: window.innerWidth < 500 ? -180 : 0 }}
+        transition={{ duration: 1.5, delay: 1.2 }}
+        style={{
+          position: 'absolute',
+          width: window.innerWidth < 500 ? 'auto' : '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+          filter: started || gameOver ? 'blur(5px)' : 'none',
+        }}
+      />
+
+      <motion.img
+        src={require('../assets/main-bearr.png')}
+        alt=""
+        initial={{ opacity: 0, x: 120 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1.4, delay: 1.2 }}
+        style={{
+          position: 'absolute',
+          width: window.innerWidth < 500 ? 'auto' : '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+          filter: started || gameOver ? 'blur(5px)' : 'none',
+        }}
+      />
 
 
 
@@ -303,67 +330,67 @@ function Main() {
         sx={{ width: { xs: '100%', md: '600px' }, borderRight: (started && window.innerWidth > 600) && '3px solid white', borderLeft: (started && window.innerWidth > 600) && '3px solid white' }}
         style={{
           zIndex: 1,
-           containerType: "inline-size",
-           position:'relative'
+          containerType: "inline-size",
+          position: 'relative'
         }}
       >
         {!started || gameOver ?
           (<>
-          {gameOver ? (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.6 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ type: "spring", stiffness: 180, damping: 12 }}
-  >
-    <Typography
-      variant="h4"
-      color="white"
-      mb={2}
-      style={{
-        textShadow:
-          "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000",
-      }}
-    >
-      Game Over
-    </Typography>
-  </motion.div>
-) : (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.7, y: -20 }}
-    animate={{ opacity: 1, scale: 1, y: 0 }}
-    transition={{
-      type: "spring",
-      stiffness: 140,
-      damping: 10,
-      delay: 1.5,
-    }}
-  >
-    <Typography
-      variant="h3"
-      color="secondary.light"
-      mb={4}
-      style={{
-        textShadow:
-          "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000",
-        lineHeight: ".67",
-        rotate: "-8deg",
-        fontSize: "12cqw",
-      }}
-    >
-      GUGO <br />
-      <span
-        style={{
-          fontFamily: `"Rubik Bubbles", system-ui`,
-          color: Theme.palette.secondary.dark,
-        }}
-      >
-        Bearish
-      </span>
-      <br />
-      <span style={{ color: Theme.palette.info.main }}>Bounce</span>
-    </Typography>
-  </motion.div>
-)}
+            {gameOver ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: "spring", stiffness: 180, damping: 12 }}
+              >
+                <Typography
+                  variant="h4"
+                  color="white"
+                  mb={2}
+                  style={{
+                    textShadow:
+                      "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000",
+                  }}
+                >
+                  Game Over
+                </Typography>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.7, y: -20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 140,
+                  damping: 10,
+                  delay: 1.5,
+                }}
+              >
+                <Typography
+                  variant="h3"
+                  color="secondary.light"
+                  mb={4}
+                  style={{
+                    textShadow:
+                      "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000",
+                    lineHeight: ".67",
+                    rotate: "-8deg",
+                    fontSize: "12cqw",
+                  }}
+                >
+                  GUGO <br />
+                  <span
+                    style={{
+                      fontFamily: `"Rubik Bubbles", system-ui`,
+                      color: Theme.palette.secondary.dark,
+                    }}
+                  >
+                    Bearish
+                  </span>
+                  <br />
+                  <span style={{ color: Theme.palette.info.main }}>Bounce</span>
+                </Typography>
+              </motion.div>
+            )}
 
             {!started && (
               <motion.div
@@ -389,11 +416,11 @@ function Main() {
                   ease: "easeInOut",
                 }}
               >
-                <Typography variant="h6" style={{textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`,}}>
+                <Typography variant="h6" style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`, }}>
                   Test Challenge Bonus!
                 </Typography>
-                <Typography variant="body1" style={{textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`,}}>
-                  Amount: 0.1 Test ETH
+                <Typography variant="body1" style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`, }}>
+                  Reward: 0.1 Test ETH
                 </Typography>
                 <Typography variant="body2" style={{ color: Theme.palette.text.light, textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000` }}>
                   Reach 10,000,000 points in one run to claim!
@@ -401,7 +428,7 @@ function Main() {
               </motion.div>
             )}
 
-          
+
             {agwClient?.account?.address ? (
               <>
                 <Button
@@ -423,37 +450,49 @@ function Main() {
                 >
                   {gameOver ? "Restart" : "Start Game"}
                 </Button>
-               
+
               </>
             ) : (
-               <motion.div
-    initial={{ opacity: 0, scale: 0.7, y: -20 }}
-    animate={{ opacity: 1, scale: 1, y: 0 }}
-    transition={{
-      type: "spring",
-      stiffness: 140,
-      damping: 10,
-      delay: 1.5,
-    }}
-  >
-              <Button
-                style={{ ...styles.buttonStyle, marginTop:'25%' }}
-                variant="contained"
-                color="primary"
-                // onClick={async () => {
-                //   console.log("🔐 Connecting wallet...");
-                //   try {
-                //     await login();
-                //     console.log("✅ Login initiated (no return value)");
-                //   } catch (e) {
-                //     console.error("❌ Wallet login failed:", e);
-                //   }
-                // }}
-                onClick={()=>setConnectModalOpen(true)}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.7, y: -20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 140,
+                  damping: 10,
+                  delay: 1.5,
+                }}
               >
-                Play
-              </Button>
-  </motion.div>
+                <Button
+                  style={{ ...styles.buttonStyle, marginTop: '25%' }}
+                  variant="contained"
+                  color="primary"
+                  // onClick={async () => {
+                  //   console.log("🔐 Connecting wallet...");
+                  //   try {
+                  //     await login();
+                  //     console.log("✅ Login initiated (no return value)");
+                  //   } catch (e) {
+                  //     console.error("❌ Wallet login failed:", e);
+                  //   }
+                  // }}
+                  onClick={() => {
+                    setConnectModalOpen(true)
+                    if (!bgMusic) {
+                      const audio = new Audio(musicFile);
+                      audio.loop = true;
+                      audio.volume = isMuted ? 0 : 1;
+                      audio.play();
+                      setBgMusic(audio);
+                    } else {
+                      bgMusic.volume = isMuted ? 0 : 1;
+                      bgMusic.play();
+                    }
+                  }}
+                >
+                  Play
+                </Button>
+              </motion.div>
             )}
           </>)
           : (<>
@@ -503,7 +542,7 @@ function Main() {
             </AnimatePresence>
 
             {/* 🎯 Health Bar Overlay */}
-            <Box position="absolute" top={5} left={20} width={200} zIndex={1} style={{textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`}}>
+            <Box position="absolute" top={5} left={20} width={200} zIndex={1} style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000` }}>
               <Typography color="white" variant="body2">
                 Health: {health}/4
               </Typography>
@@ -516,10 +555,10 @@ function Main() {
             </Box>
             {/* 🏆 Score Overlay (top-right) */}
             <Box position="absolute" top={20} right={20} zIndex={1}>
-              <Typography color="white" variant="body2" style={{textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`}}>
+              <Typography color="white" variant="body2" style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000` }}>
                 Score: {score}
               </Typography>
-              <Typography color="white" variant="body2" style={{textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`}}>
+              <Typography color="white" variant="body2" style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000` }}>
                 Multiplier: x{multiplier}
               </Typography>
             </Box>
@@ -531,146 +570,146 @@ function Main() {
             />
             {started && !gameOver && (
               <Box
-  sx={{
-    position: "absolute",
-    bottom: 70,
-    left: "50%",
-    transform: "translateX(-50%)",
-    display: { xs: 'flex', md: 'none' },
-    width: "98%",
-    height: "60px",
-    backgroundColor: "#222",
-    borderRadius: "30px",
-    overflow: "hidden",
-    zIndex: 1000,
-    touchAction: "none",
-  }}
->
-  <Button
-    sx={{
-      width: "50%",
-      height: "100%",
-      borderRight: "1px solid #444",
-      color: "white",
-      fontWeight: "bold",
-      fontSize: "18px",
-      backgroundColor: "#333",
-      "&:active": { backgroundColor: "#555" },
-    }}
-    onTouchStart={() => {
-      window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: -1 } }));
-    }}
-    onTouchEnd={() => {
-      window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
-    }}
-    onMouseDown={() => {
-      window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: -1 } }));
-    }}
-    onMouseUp={() => {
-      window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
-    }}
-  >
-    ← Left
-  </Button>
+                sx={{
+                  position: "absolute",
+                  bottom: 70,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  display: { xs: 'flex', md: 'none' },
+                  width: "98%",
+                  height: "60px",
+                  backgroundColor: "#222",
+                  borderRadius: "30px",
+                  overflow: "hidden",
+                  zIndex: 1000,
+                  touchAction: "none",
+                }}
+              >
+                <Button
+                  sx={{
+                    width: "50%",
+                    height: "100%",
+                    borderRight: "1px solid #444",
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                    backgroundColor: "#333",
+                    "&:active": { backgroundColor: "#555" },
+                  }}
+                  onTouchStart={() => {
+                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: -1 } }));
+                  }}
+                  onTouchEnd={() => {
+                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
+                  }}
+                  onMouseDown={() => {
+                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: -1 } }));
+                  }}
+                  onMouseUp={() => {
+                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
+                  }}
+                >
+                  ← Left
+                </Button>
 
-  <Button
-    sx={{
-      width: "50%",
-      height: "100%",
-      color: "white",
-      fontWeight: "bold",
-      fontSize: "18px",
-      backgroundColor: "#333",
-      "&:active": { backgroundColor: "#555" },
-    }}
-    onTouchStart={() => {
-      window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 1 } }));
-    }}
-    onTouchEnd={() => {
-      window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
-    }}
-    onMouseDown={() => {
-      window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 1 } }));
-    }}
-    onMouseUp={() => {
-      window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
-    }}
-  >
-    Right →
-  </Button>
-</Box>
+                <Button
+                  sx={{
+                    width: "50%",
+                    height: "100%",
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                    backgroundColor: "#333",
+                    "&:active": { backgroundColor: "#555" },
+                  }}
+                  onTouchStart={() => {
+                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 1 } }));
+                  }}
+                  onTouchEnd={() => {
+                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
+                  }}
+                  onMouseDown={() => {
+                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 1 } }));
+                  }}
+                  onMouseUp={() => {
+                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
+                  }}
+                >
+                  Right →
+                </Button>
+              </Box>
 
             )}
           </>)
         }
 
         <Modal open={!!connectModalOpen} onClose={() => setConnectModalOpen(false)}>
-  <Grid
-    container
-    xs={11}
-    md={6}
-    lg={4}
-    style={{
-      position: "absolute",
-      left: "50%",
-      top: "50%",
-      transform: "translate(-50%, -50%)",
-      backgroundColor: '#fff',
-      borderRadius: 12,
-      padding: "32px 24px",
-      boxShadow: "0 0 40px rgba(0,0,0,0.4)",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      textAlign: "center",
-      zIndex: 9999
-    }}
-  >
-    <Typography variant="h5"  gutterBottom color="primary" style={{}}>
-      Connect Your Wallet
-    </Typography>
+          <Grid
+            container
+            xs={11}
+            md={6}
+            lg={4}
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              backgroundColor: '#fff',
+              borderRadius: 12,
+              padding: "32px 24px",
+              boxShadow: "0 0 40px rgba(0,0,0,0.4)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              zIndex: 9999
+            }}
+          >
+            <Typography variant="h5" gutterBottom color="primary" style={{}}>
+              Connect Your Wallet
+            </Typography>
 
-    <Typography variant="body1" style={{ marginBottom: "24px", color: Theme.palette.text.secondary,  }}>
-      To play the game and compete for rewards, you'll need to connect your wallet and pay with $GUGO.  
-      <br /><br />
-      Or click **Practice** below to try it out for free!
-    </Typography>
+            <Typography variant="body1" style={{ marginBottom: "24px", color: Theme.palette.text.secondary, }}>
+              To play the game and compete for rewards, you'll need to connect your wallet and pay with $GUGO.
+              <br /><br />
+              Or click **Practice** below to try it out for free!
+            </Typography>
 
-    <Button
-      style={{ ...styles.buttonStyle, marginBottom: "16px" }}
-      variant="contained"
-      color="primary"
-      onClick={async () => {
-        console.log("🔐 Connecting wallet...");
-        try {
-          await login();
-          console.log("✅ Login initiated (no return value)");
-          setConnectModalOpen(false);
-        } catch (e) {
-          console.error("❌ Wallet login failed:", e);
-        }
-      }}
-    >
-      Connect Wallet
-    </Button>
+            <Button
+              style={{ ...styles.buttonStyle, marginBottom: "16px" }}
+              variant="contained"
+              color="primary"
+              onClick={async () => {
+                console.log("🔐 Connecting wallet...");
+                try {
+                  await login();
+                  console.log("✅ Login initiated (no return value)");
+                  setConnectModalOpen(false);
+                } catch (e) {
+                  console.error("❌ Wallet login failed:", e);
+                }
+              }}
+            >
+              Connect Wallet
+            </Button>
 
-    <Button
-      style={styles.buttonStyle}
-      variant="outlined"
-      color="primary"
-      onClick={() => {
-        console.log("🕹 Practice Mode from modal");
-        setStarted(true);
-        setGameOver(false);
-        setHealth(4);
-        setScore(0);
-        setConnectModalOpen(false);
-      }}
-    >
-      Practice Mode
-    </Button>
-  </Grid>
-</Modal>
+            <Button
+              style={styles.buttonStyle}
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                console.log("🕹 Practice Mode from modal");
+                setStarted(true);
+                setGameOver(false);
+                setHealth(4);
+                setScore(0);
+                setConnectModalOpen(false);
+              }}
+            >
+              Practice Mode
+            </Button>
+          </Grid>
+        </Modal>
 
 
       </Box>
@@ -718,20 +757,20 @@ function Main() {
         <Leaderboard
           styles={styles}
           playerAddress={signerAddress}
-    
-           onPlayAgain={async () => {
-                    console.log("AGW Client before pay-to-play:", agwClient);
-                    //   setStarted(true);
-                    //   setGameOver(false);
-                    const success = await handlePayToPlay();
-                    if (success) {
-                      setStarted(true);
-                      setGameOver(false);
-                       setShowLeaderboard(false);
-                      setHealth(4);
-                      setScore(0);
-                    }
-                  }}
+
+          onPlayAgain={async () => {
+            console.log("AGW Client before pay-to-play:", agwClient);
+            //   setStarted(true);
+            //   setGameOver(false);
+            const success = await handlePayToPlay();
+            if (success) {
+              setStarted(true);
+              setGameOver(false);
+              setShowLeaderboard(false);
+              setHealth(4);
+              setScore(0);
+            }
+          }}
         />
       )}
 
