@@ -18,7 +18,7 @@ import confetti from "canvas-confetti";
 import { MainContext } from "../App";
 
 function Main() {
-  const {Theme} = useContext(MainContext)
+  const { Theme } = useContext(MainContext)
   const [started, setStarted] = useState(false);
   const [health, setHealth] = useState(4);
   const [gameOver, setGameOver] = useState(false);
@@ -39,11 +39,11 @@ function Main() {
 
   // UI Queues
   const [platformsReached, setPlatformsReached] = useState(0)
-  const [babyBearsCollected, setBabyBearsCollected] = useState(0) 
-  const [babyDucksCollected, setBabyDucksCollected] = useState(0) 
-  const [fishCollected, setFishCollected] = useState(0) 
-  const [honeyCollected, setHoneyCollected] = useState(0) 
-  const [grapesCollected, setGrapesCollected] = useState(0) 
+  const [babyBearsCollected, setBabyBearsCollected] = useState(0)
+  const [babyDucksCollected, setBabyDucksCollected] = useState(0)
+  const [fishCollected, setFishCollected] = useState(0)
+  const [honeyCollected, setHoneyCollected] = useState(0)
+  const [grapesCollected, setGrapesCollected] = useState(0)
 
   const handleLeaderboardUpdate = async (walletAddress, score) => {
     const ref = doc(db, "testLeaderboards", walletAddress.toLowerCase());
@@ -181,12 +181,12 @@ function Main() {
 
 
   const styles = {
-    buttonStyle:{
-              borderLeft: `3px solid ${Theme.palette.primary.dark}`,
-              borderTop: `3px solid ${Theme.palette.primary.dark}`,
-              borderRight: `3px solid ${Theme.palette.primary.dark}`,
-              borderBottom: `3px solid ${Theme.palette.primary.light}`,
-              borderRadius:'100px'
+    buttonStyle: {
+      borderLeft: `3px solid ${Theme.palette.primary.dark}`,
+      borderTop: `3px solid ${Theme.palette.primary.dark}`,
+      borderRight: `3px solid ${Theme.palette.primary.dark}`,
+      borderBottom: `3px solid ${Theme.palette.primary.light}`,
+      borderRadius: '100px'
     }
   }
 
@@ -196,204 +196,259 @@ function Main() {
       height="100vh"
       bgcolor="#121212"
       sx={{
-        width: { xs: "100dvw", 
+        width: {
+          xs: "100dvw",
           // md: "600px", sm:'400px' 
         },
         height: "100dvh",
         containerType: "inline-size",
-        display:'flex',
-        justifyContent:'center',
-        alignItems:'center'
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
       }}
     >
-      <img 
-      src={require('../assets/main-bg.png')}
-      alt=''
-      style={{
-        position: 'absolute',
-        alignItemsn:'center',
-        justifyContent:'center',
-        tranform:'translate(-50%. -50%)',
-        width:'100%',
-        height:'100%',
-        objectFit:'cover',
-        zIndex:0,
-        fitler: started || gameOver ? 'blur(5px)' : 'none'
-      }} />
+      <img
+        src={require('../assets/main-bg.png')}
+        alt=''
+        style={{
+          position: 'absolute',
+          alignItemsn: 'center',
+          justifyContent: 'center',
+          tranform: 'translate(-50%. -50%)',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+          fitler: started || gameOver ? 'blur(5px)' : 'none'
+        }} />
       {/* 🔐 AGW Connect Button */}
-      
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          height="100%"
-          sx={{width:{xs:'100%', md: '600px'}, borderRight:(started && window.innerWidth > 600) && '3px solid white' , borderLeft: (started && window.innerWidth > 600) && '3px solid white'}}
-style={{          zIndex:1
-}}        >
- { !started || gameOver ? 
- (<>
- <Typography variant="h4" color="white" mb={2} style={{fontWeight:900}}>
-            {gameOver ? "Game Over" : "GUGO Bearish Bounce"}
-          </Typography>
-          {agwClient?.account?.address ? (
-            <Button
-            style={{...styles.buttonStyle}}
-              variant="contained"
-              color="primary"
-              onClick={async () => {
-                console.log("AGW Client before pay-to-play:", agwClient);
-                //   setStarted(true);
-                //   setGameOver(false);
-                const success = await handlePayToPlay();
-                if (success) {
-                  setStarted(true);
-                  setGameOver(false);
-                  setHealth(4);
-                  setScore(0);
-                }
-              }}
-            >
-              {gameOver ? "Restart" : "Start Game"}
-            </Button>
-          ) : (
-            <Button
-            style={{...styles.buttonStyle}}
-              variant="contained"
-              color="primary"
-              onClick={async () => {
-                console.log("🔐 Connecting wallet...");
-                try {
-                  await login();
-                  console.log("✅ Login initiated (no return value)");
-                } catch (e) {
-                  console.error("❌ Wallet login failed:", e);
-                }
-              }}
-            >
-              Connect Wallet
-            </Button>
-          )}
- </>)
- : (  <>
-          {/* 🎯 Message Overlay */}
-          <AnimatePresence>
-            {message && (
+
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        height="100%"
+        sx={{ width: { xs: '100%', md: '600px' }, borderRight: (started && window.innerWidth > 600) && '3px solid white', borderLeft: (started && window.innerWidth > 600) && '3px solid white' }}
+        style={{
+          zIndex: 1
+        }}
+      >
+        {!started || gameOver ?
+          (<>
+            {!started && (
               <motion.div
-                key="multiplier-message"
-                initial={{ scale: 0.2, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.2, opacity: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 20,
-                  duration: 0.6,
-                }}
                 style={{
-                  position: "absolute",
-                  top: "10%",
-                  left: "30%",
-                  //   transform: "translate(-50%, 0%)",
-                  zIndex: 1000,
+                  padding: "12px 24px",
+                  borderRadius: "12px",
+                  backgroundColor: "#3B853998",
+                  color: Theme.palette.text.light,
+                  marginBottom: "16px",
+                  textAlign: "center",
+                  border: "#B96E1E solid 2px"
+                }}
+                animate={{
+                  boxShadow: [
+                    `0 0 10px ${Theme.palette.secondary.dark}, 0 0 20px ${Theme.palette.secondary.dark}aa, 0 0 30px ${Theme.palette.primary.dark}88`,
+                    `0 0 20px ${Theme.palette.secondary.main}, 0 0 30px ${Theme.palette.secondary.main}cc, 0 0 40px ${Theme.palette.primary.main}aa`,
+                    `0 0 10px ${Theme.palette.secondary.dark}, 0 0 20px ${Theme.palette.secondary.dark}aa, 0 0 30px ${Theme.palette.primary.dark}88`,
+                  ],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
                 }}
               >
-                <Typography
-                  color={message.includes("x Combo!") ? "error" : "primary"}
-                  style={{
-                    // position: "absolute",
-                    // top: "10%",
-                    // left: "50%",
-                    // transform: "translate(-50%, 0%)",
-                    fontSize: "12cqw",
-                    fontWeight: 900,
-                    textShadow: `-2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff`,
-                    rotate: "-4deg",
-                    letterSpacing: -3,
-                    zIndex: 1000,
-                  }}
-                >
-                  {message.split(" ")[0]}
-                  <span style={{ fontSize: "6cqw" }}>
-                    {message.split(" ")[1]}
-                  </span>
+                <Typography variant="h6" style={{ fontWeight: 800 }}>
+                  Test Challenge Bonus!
+                </Typography>
+                <Typography variant="body1">
+                  Amount: 0.1 Test ETH
+                </Typography>
+                <Typography variant="body2" style={{ color: Theme.palette.text.light }}>
+                  Reach 10,000,000 points in one run to claim!
                 </Typography>
               </motion.div>
             )}
-          </AnimatePresence>
 
-          {/* 🎯 Health Bar Overlay */}
-          <Box position="absolute" top={5} left={20} width={200} zIndex={1}>
-            <Typography color="white" variant="body2">
-              Health: {health}/4
+            <Typography variant="h4" color="white" mb={2} style={{ fontWeight: 900 }}>
+              {gameOver ? "Game Over" : "GUGO Bearish Bounce"}
             </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={(health / 4) * 100}
-              color={health <= 1 ? "error" : "secondary"}
-              style={{ height: 15, borderRadius: 25 }}
+            {agwClient?.account?.address ? (
+              <>
+                <Button
+                  style={{ ...styles.buttonStyle }}
+                  variant="contained"
+                  color="primary"
+                  onClick={async () => {
+                    console.log("AGW Client before pay-to-play:", agwClient);
+                    //   setStarted(true);
+                    //   setGameOver(false);
+                    const success = await handlePayToPlay();
+                    if (success) {
+                      setStarted(true);
+                      setGameOver(false);
+                      setHealth(4);
+                      setScore(0);
+                    }
+                  }}
+                >
+                  {gameOver ? "Restart" : "Start Game"}
+                </Button>
+                <Button
+                  style={{ ...styles.buttonStyle, marginTop: "12px" }}
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    console.log("🕹 Starting Practice Mode");
+                    setStarted(true);
+                    setGameOver(false);
+                    setHealth(4);
+                    setScore(0);
+                  }}
+                >
+                  Practice
+                </Button>
+              </>
+            ) : (
+              <Button
+                style={{ ...styles.buttonStyle }}
+                variant="contained"
+                color="primary"
+                onClick={async () => {
+                  console.log("🔐 Connecting wallet...");
+                  try {
+                    await login();
+                    console.log("✅ Login initiated (no return value)");
+                  } catch (e) {
+                    console.error("❌ Wallet login failed:", e);
+                  }
+                }}
+              >
+                Connect Wallet
+              </Button>
+            )}
+          </>)
+          : (<>
+            {/* 🎯 Message Overlay */}
+            <AnimatePresence>
+              {message && (
+                <motion.div
+                  key="multiplier-message"
+                  initial={{ scale: 0.2, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.2, opacity: 0 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 20,
+                    duration: 0.6,
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: "10%",
+                    left: "30%",
+                    //   transform: "translate(-50%, 0%)",
+                    zIndex: 1000,
+                  }}
+                >
+                  <Typography
+                    color={message.includes("x Combo!") ? "error" : "primary"}
+                    style={{
+                      // position: "absolute",
+                      // top: "10%",
+                      // left: "50%",
+                      // transform: "translate(-50%, 0%)",
+                      fontSize: "12cqw",
+                      fontWeight: 900,
+                      textShadow: `-2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff`,
+                      rotate: "-4deg",
+                      letterSpacing: -3,
+                      zIndex: 1000,
+                    }}
+                  >
+                    {message.split(" ")[0]}
+                    <span style={{ fontSize: "6cqw" }}>
+                      {message.split(" ")[1]}
+                    </span>
+                  </Typography>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* 🎯 Health Bar Overlay */}
+            <Box position="absolute" top={5} left={20} width={200} zIndex={1}>
+              <Typography color="white" variant="body2">
+                Health: {health}/4
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={(health / 4) * 100}
+                color={health <= 1 ? "error" : "secondary"}
+                style={{ height: 15, borderRadius: 25 }}
+              />
+            </Box>
+            {/* 🏆 Score Overlay (top-right) */}
+            <Box position="absolute" top={20} right={20} zIndex={1}>
+              <Typography color="white" variant="body2">
+                Score: {score}
+              </Typography>
+              <Typography color="white" variant="body2">
+                Multiplier: x{multiplier}
+              </Typography>
+            </Box>
+            {/* 🕹 Game Canvas */}
+            <GameContainer
+              onHealthChange={handleHealthChange}
+              onScoreChange={handleScoreChange}
+              setMessage={setMessage}
             />
-          </Box>
-          {/* 🏆 Score Overlay (top-right) */}
-          <Box position="absolute" top={20} right={20} zIndex={1}>
-            <Typography color="white" variant="body2">
-              Score: {score}
-            </Typography>
-            <Typography color="white" variant="body2">
-              Multiplier: x{multiplier}
-            </Typography>
-          </Box>
-          {/* 🕹 Game Canvas */}
-          <GameContainer
-            onHealthChange={handleHealthChange}
-            onScoreChange={handleScoreChange}
-            setMessage={setMessage}
-          />
-          {started && !gameOver && (
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 70,
-                left: "50%",
-                transform: "translateX(-50%)",
-                display:{xs:'box', md:'none'},
-                width: "98%",
-                height: "60px",
-                backgroundColor: "#222",
-                borderRadius: "30px",
-                zIndex: 1000,
-                touchAction: "none",
-              }}
-              onTouchStart={(e) => {
-                const touch = e.touches[0];
-                const box = e.currentTarget.getBoundingClientRect();
-                const deltaX = touch.clientX - box.left - box.width / 2;
-                const direction = deltaX / (box.width / 2);
-                window.dispatchEvent(
-                  new CustomEvent("sliderMove", { detail: { direction } })
-                );
-              }}
-              onTouchMove={(e) => {
-                const touch = e.touches[0];
-                const box = e.currentTarget.getBoundingClientRect();
-                const deltaX = touch.clientX - box.left - box.width / 2;
-                const direction = deltaX / (box.width / 2);
-                window.dispatchEvent(
-                  new CustomEvent("sliderMove", { detail: { direction } })
-                );
-              }}
-              onTouchEnd={() => {
-                window.dispatchEvent(
-                  new CustomEvent("sliderMove", { detail: { direction: 0 } })
-                );
-              }}
-            />
-          )}
-        </>)
- }
-          
-        </Box>
-      
+            {started && !gameOver && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  bottom: 70,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  display: { xs: 'box', md: 'none' },
+                  width: "98%",
+                  height: "60px",
+                  backgroundColor: "#222",
+                  borderRadius: "30px",
+                  zIndex: 1000,
+                  touchAction: "none",
+                }}
+                onTouchStart={(e) => {
+                  const touch = e.touches[0];
+                  const box = e.currentTarget.getBoundingClientRect();
+                  const deltaX = touch.clientX - box.left - box.width / 2;
+                  const direction = deltaX / (box.width / 2);
+                  window.dispatchEvent(
+                    new CustomEvent("sliderMove", { detail: { direction } })
+                  );
+                }}
+                onTouchMove={(e) => {
+                  const touch = e.touches[0];
+                  const box = e.currentTarget.getBoundingClientRect();
+                  const deltaX = touch.clientX - box.left - box.width / 2;
+                  const direction = deltaX / (box.width / 2);
+                  window.dispatchEvent(
+                    new CustomEvent("sliderMove", { detail: { direction } })
+                  );
+                }}
+                onTouchEnd={() => {
+                  window.dispatchEvent(
+                    new CustomEvent("sliderMove", { detail: { direction: 0 } })
+                  );
+                }}
+              />
+            )}
+          </>)
+        }
+
+      </Box>
+
 
       {agwClient?.account?.address && (
         <Box
@@ -408,7 +463,7 @@ style={{          zIndex:1
             transform: "translate(-50%, 0%)",
           }}
         >
-          <Button style={{...styles.buttonStyle}} variant="contained" color="primary" onClick={logout}>
+          <Button style={{ ...styles.buttonStyle }} variant="contained" color="primary" onClick={logout}>
             Disconnect Wallet
           </Button>
           <Typography variant="caption" color="white">
@@ -422,7 +477,7 @@ style={{          zIndex:1
 
       {showUsernameModal && (
         <UsernameModal
-        styles={styles}
+          styles={styles}
           walletAddress={signerAddress}
           score={finalScore}
           onComplete={() => {
@@ -435,7 +490,7 @@ style={{          zIndex:1
 
       {showLeaderboard && (
         <Leaderboard
-        styles={styles}
+          styles={styles}
           playerAddress={signerAddress}
           onPlayAgain={() => {
             setGameOver(false);
@@ -449,7 +504,7 @@ style={{          zIndex:1
 
       {showPRModal && (
         <PRModal
-        styles={styles}
+          styles={styles}
           score={score}
           onClose={() => {
             setShowPRModal(false);
