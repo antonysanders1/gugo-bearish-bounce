@@ -209,7 +209,8 @@ function Main() {
         height: "100dvh",
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        overflow:'hidden'
       }}
     >
 
@@ -448,7 +449,7 @@ function Main() {
                     }
                   }}
                 >
-                  {gameOver ? "Restart" : "Start Game"}
+                  {gameOver ? "Restart" : "Start Game .0001 eth"}
                 </Button>
 
               </>

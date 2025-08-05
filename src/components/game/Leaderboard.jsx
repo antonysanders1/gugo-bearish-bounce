@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 import { motion } from "framer-motion";
+import {MainContext} from '../../App'
 
 const testPlayers = [
   { address: "0xaaa1", username: "Zeta", totalPoints: 98540 },
@@ -31,6 +32,7 @@ const testPlayers = [
 ];
 
 const Leaderboard = ({ playerAddress, onPlayAgain, styles, playerScore }) => {
+  const {setMessage, setInfo} = useContext(MainContext)
   const [entries, setEntries] = useState([]);
   const [playerRank, setPlayerRank] = useState(null);
   const playerRef = useRef(null); // 👈 Ref to scroll into view
@@ -50,7 +52,10 @@ const Leaderboard = ({ playerAddress, onPlayAgain, styles, playerScore }) => {
         rank: index + 1,
       }));
       setEntries(
-        [...data, ...testPlayers].sort((a, b) => b.totalPoints - a.totalPoints)
+        [...data, ...testPlayers].sort((a, b) => b.totalPoints - a.totalPoints).map((e, i) => ({
+          ...e,
+          rank: i+1
+        }))
       );
 
       const found = data.find(
@@ -100,28 +105,42 @@ const Leaderboard = ({ playerAddress, onPlayAgain, styles, playerScore }) => {
           mb: 1,
         }}
       >
-        <Typography
-          variant="subtitle1"
-          sx={{
-            fontWeight: "bold",
-            color: "#444",
-            textTransform: "uppercase",
-            letterSpacing: 1,
+        <motion.div whileHover={{scale:.98}}>
+          <Typography
+          onClick={()=> {
+            setMessage("You're in test mode!")
+            setInfo(true)
           }}
-        >
-          0 GUGO BURNED
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          sx={{
-            fontWeight: "bold",
-            color: "#444",
-            textTransform: "uppercase",
-            letterSpacing: 1,
+            variant="subtitle1"
+            sx={{
+              fontWeight: "bold",
+              color: "#444",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              cursor: 'pointer'
+            }}
+            >
+            0 GUGO BURNED
+          </Typography>
+        </motion.div>
+        <motion.div whileHover={{scale:.98}}>
+          <Typography
+           onClick={()=> {
+            setMessage("You're in test mode!")
+            setInfo(true)
           }}
-        >
-          Prize Pool: TBA
-        </Typography>
+            variant="subtitle1"
+            sx={{
+              fontWeight: "bold",
+              color: "#444",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              cursor: 'pointer'
+            }}
+          >
+            Prize Pool: TBA
+          </Typography>
+        </motion.div>
       </Box>
 
       <Box
