@@ -33,7 +33,7 @@
     "dot-env": "^0.0.1",
     "dotenv": "^16.4.5",
     "driver.js": "^1.3.6",
-    "firebase": "^11.5.0",
+    "firebase": "^12.0.0",
     "framer-motion": "^11.2.5",
     "generate-password": "^1.7.1",
     "lodash": "^4.17.21",
@@ -63,7 +63,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy:dev": "react-scripts build && firebase deploy --only hosting:dev",
-    "deploy:prod": "react-scripts build && firebase deploy --only hosting:prod"
+    "deploy:prod": "react-scripts build && firebase deploy --only hosting:gugobearishbounce"
   },
   "eslintConfig": {
     "extends": [

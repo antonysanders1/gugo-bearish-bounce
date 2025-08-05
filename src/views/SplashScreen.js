@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { motion } from "framer-motion";
-import logo from "../assets/logo512.png";
+import logo from "../assets/gbb-logo.png";
 import { Grid, Typography } from "@mui/material";
 import { MainContext } from "../App";
 
@@ -49,18 +49,7 @@ const SplashScreen = () => {
             objectFit: "contain",
           }}
         />
-        {/* <Typography
-          variant="h3"
-          style={{ fontWeight: "bold", color: black, marginTop: 20 }}
-        >
-          Antony Sanders
-        </Typography> */}
-        <Typography
-          variant="caption"
-          style={{ color: Theme.palette.black, marginTop: 20 }}
-        >
-          SUB TEXT HERE
-        </Typography>
+
       </motion.div>
       <motion.p
         animate={{ opacity: 1 }}
@@ -76,7 +65,7 @@ const SplashScreen = () => {
           fontSize: ".75rem",
         }}
       >
-        Additional Text Here
+        A CUTI App Product
       </motion.p>
     </Grid>
   );

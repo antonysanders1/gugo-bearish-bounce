@@ -56,7 +56,7 @@ export const theme = {
         },
     },
     typography: {
-        fontFamily: `"Poppins", sans-serif`,
+        fontFamily: `"Cherry Bomb One", system-ui`,
     },
     zIndex: {
         mobileStepper: 1000,

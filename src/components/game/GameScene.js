@@ -409,23 +409,45 @@ export default class GameScene extends Phaser.Scene {
             block.setFrame(1); // 🔁 Switch to idle frame after short delay
             platform.setFrame(platform.baseFrame); // Reset after bounce
 
-            if (this.multiplier % 25 === 0) {
-              // 🔥 Show hype frame and spin!
-              this.setMessage(`${this.multiplier}x Combo!`);
-              this.comboSound?.play();
-              block.setFrame(2);
+            if (this.multiplier % 10 === 0 || this.multiplier % 25 === 0 ) {
+  this.setMessage(`${this.multiplier}x Combo!`);
+  this.comboSound?.play();
 
-              // Spin animation
-              this.tweens.add({
-                targets: block,
-                angle: 360,
-                duration: 300,
-                ease: "Cubic.easeOut",
-                onComplete: () => {
-                  block.setAngle(0); // reset angle to avoid compounding
-                },
-              });
-            }
+  const hypeFrames = [2, 5, 6];
+  const selectedFrame = Phaser.Utils.Array.GetRandom(hypeFrames);
+  block.setFrame(selectedFrame);
+
+  if (selectedFrame === 2) {
+    // 🎉 Existing spin animation
+    this.tweens.add({
+      targets: block,
+      angle: 360,
+      duration: 300,
+      ease: "Cubic.easeOut",
+      onComplete: () => {
+        block.setAngle(0);
+      },
+    });
+  } else if (selectedFrame === 5) {
+    // 🌀 Quick rotate 90°
+    this.tweens.add({
+      targets: block,
+      angle: -90,
+      duration: 1000,
+      ease: "Power2",
+      onComplete: () => {
+        this.tweens.add({
+          targets: block,
+          angle: 0,
+          duration: 200,
+          ease: "Power2",
+        });
+      },
+    });
+  }
+  // else if selectedFrame === 6 — No animation, just display
+}
+
           });
 
           const platformId = platform.customId;

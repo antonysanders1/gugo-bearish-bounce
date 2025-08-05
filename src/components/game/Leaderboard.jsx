@@ -83,7 +83,7 @@ const Leaderboard = ({ playerAddress, onPlayAgain, styles, playerScore }) => {
         zIndex: 9998,
         boxShadow: 3,
         width: "80%",
-        height: "80dvh",
+        height: "84dvh",
         overflow: "hidden",
       }}
     >
