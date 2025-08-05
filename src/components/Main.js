@@ -670,7 +670,7 @@ function Main() {
             </Typography>
 
             <Typography variant="body1" style={{ marginBottom: "24px", color: Theme.palette.text.secondary, }}>
-              To play the game and compete for rewards, you'll need to connect your wallet and pay with $GUGO.
+              To play the game and compete for rewards, you'll need to connect your wallet and pay with $ETH.
               <br /><br />
               Or click **Practice** below to try it out for free!
             </Typography>
