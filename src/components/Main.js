@@ -83,7 +83,7 @@ function Main() {
     useGlobalWalletSignerAccount();
 
   const { login, logout, isConnected } = useLoginWithAbstract();
-  const { data: agwClient } = useAbstractClient();
+  let { data: agwClient } = useAbstractClient();
 
   useEffect(() => {
     console.log("🧾 Signer EOA:", signerAddress, "Status:", signerStatus);
@@ -495,7 +495,7 @@ function Main() {
             )}
 
 
-            {agwClient?.account?.address ? (
+            {(agwClient?.account?.address &&  signerStatus && signerStatus !== 'disconnected') ? (
               <>
                 <Button
                   style={{ ...styles.buttonStyle }}
@@ -907,7 +907,7 @@ function Main() {
       </Box>
 
 
-      {agwClient?.account?.address && (
+      {(agwClient?.account?.address && signerStatus && signerStatus !== 'disconnected') && (
         <Box
           style={{
             width: "90%",
@@ -918,9 +918,10 @@ function Main() {
             bottom: 5,
             left: "50%",
             transform: "translate(-50%, 0%)",
+            zIndex:1000
           }}
         >
-          <Button style={{ ...styles.buttonStyle }} variant="contained" color="primary" onClick={logout}>
+          <Button style={{ ...styles.buttonStyle }} variant="contained" color="primary" onClick={()=>{logout()}}>
             Disconnect Wallet
           </Button>
           <Typography variant="caption" color="white">
