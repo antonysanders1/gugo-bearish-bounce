@@ -1,6 +1,6 @@
 // /src/Main.jsx
 import React, { useState, useCallback, useEffect, useContext } from "react";
-import { Box, Button, Typography, LinearProgress, Modal, Grid } from "@mui/material";
+import { Box, Button, Typography, LinearProgress, Modal, Grid,Tooltip,MobileStepper   } from "@mui/material";
 import GameContainer from "./GameContainer";
 import {
   useLoginWithAbstract,
@@ -17,6 +17,7 @@ import PRModal from "./game/PRModal";
 import confetti from "canvas-confetti";
 import { MainContext } from "../App";
 import musicFile from "../assets/music.mp3";
+import bearSprite from '../assets/bear-sprite.png'
 
 
 function Main() {
@@ -24,7 +25,9 @@ function Main() {
     setBgMusic,
     isMuted,
     setIsMuted } = useContext(MainContext)
-  const [connectModalOpen, setConnectModalOpen] = useState(0)
+  const [connectModalOpen, setConnectModalOpen] = useState(false)
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [howToStep, setHowToStep] = useState(0);
   const [started, setStarted] = useState(false);
   const [health, setHealth] = useState(4);
   const [gameOver, setGameOver] = useState(false);
@@ -50,6 +53,10 @@ function Main() {
   const [fishCollected, setFishCollected] = useState(0)
   const [honeyCollected, setHoneyCollected] = useState(0)
   const [grapesCollected, setGrapesCollected] = useState(0)
+
+  //Music Voulme
+  const [volume, setVolume] = useState(0.5); // 🎚️ Range: 0 - 1
+
 
   const handleLeaderboardUpdate = async (walletAddress, score) => {
     const ref = doc(db, "testLeaderboards", walletAddress.toLowerCase());
@@ -108,6 +115,13 @@ function Main() {
       return () => clearTimeout(timer);
     }
   }, [message]);
+
+  useEffect(() => {
+  if (bgMusic) {
+    bgMusic.volume = isMuted ? 0 : volume;
+  }
+}, [volume, isMuted, bgMusic]);
+
 
   useEffect(() => {
     if (gameOver && signerAddress) {
@@ -193,7 +207,14 @@ function Main() {
       borderRight: `3px solid ${Theme.palette.primary.dark}`,
       borderBottom: `3px solid ${Theme.palette.primary.light}`,
       borderRadius: '100px'
-    }
+    },
+    buttonStyle2: {
+      borderLeft: `3px solid ${Theme.palette.secondary.dark}`,
+      borderTop: `3px solid ${Theme.palette.secondary.dark}`,
+      borderRight: `3px solid ${Theme.palette.secondary.dark}`,
+      borderBottom: `3px solid ${Theme.palette.secondary.light}`,
+      borderRadius: '100px'
+    },
   }
 
   return (
@@ -214,27 +235,71 @@ function Main() {
       }}
     >
 
-      <Button
-        onClick={() => {
-          if (bgMusic) {
+      {bgMusic && 
+      <Box
+      onClick={() => {
+          if(isMuted){
             bgMusic.muted = !isMuted;
             setIsMuted(!isMuted);
           }
+          
         }}
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          zIndex: 9999,
-          backgroundColor: "#00000088",
-          color: "white",
-          borderRadius: 50,
-          padding: "6px 12px",
-          fontWeight: 600
-        }}
-      >
-        {isMuted ? "Unmute 🔇" : "Mute 🔊"}
-      </Button>
+  sx={{
+    position: "absolute",
+    top: {xs: !started ? '20px':'60px', md:'20px' },
+    left: {xs:'10px'},
+    zIndex: 9999,
+    backgroundColor: "#00000088",
+    padding: "6px 12px",
+     borderRadius: '50px',
+     display:'flex',
+     justifyContent:'center',
+     alignItems:'center'
+  }}
+>
+  
+  {!isMuted && <>
+  <Tooltip title={`${(volume * 100).toFixed(0)}%`} arrow >
+  <Box display="flex" flexDirection="row" alignItems="center">
+    <Typography color="white" variant="caption">
+      Volume
+    </Typography>
+    <input
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      value={volume}
+      onChange={(e) => setVolume(parseFloat(e.target.value))}
+      style={{ width: 100, marginRight: 4}}
+    />
+  </Box>
+</Tooltip>
+  </>}
+  {isMuted ? <Typography color="white" variant="caption"  style={{cursor:'pointer'}} onClick={() => {
+          
+            bgMusic.muted = !isMuted;
+            setIsMuted(!isMuted);
+          
+          
+        }}>
+    Unmute 🔊
+  </Typography> : 
+  <Tooltip title={"Mute"} arrow >
+    <Typography color="white" style={{cursor:'pointer'}} onClick={() => {
+            
+              bgMusic.muted = !isMuted;
+              setIsMuted(!isMuted);
+            
+            
+          }}>🔇</Typography>
+  </Tooltip>
+        }
+</Box>
+      }
+
+
+      
       <img
         src={window.innerWidth < 500 ? require('../assets/mobile-bg.png') : require('../assets/main-bg.png')}
         alt=''
@@ -454,6 +519,7 @@ function Main() {
 
               </>
             ) : (
+              <>
               <motion.div
                 initial={{ opacity: 0, scale: 0.7, y: -20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -468,32 +534,57 @@ function Main() {
                   style={{ ...styles.buttonStyle, marginTop: '25%' }}
                   variant="contained"
                   color="primary"
-                  // onClick={async () => {
-                  //   console.log("🔐 Connecting wallet...");
-                  //   try {
-                  //     await login();
-                  //     console.log("✅ Login initiated (no return value)");
-                  //   } catch (e) {
-                  //     console.error("❌ Wallet login failed:", e);
-                  //   }
-                  // }}
                   onClick={() => {
-                    setConnectModalOpen(true)
                     if (!bgMusic) {
-                      const audio = new Audio(musicFile);
+                     const audio = new Audio(musicFile);
                       audio.loop = true;
-                      audio.volume = isMuted ? 0 : 1;
+                      audio.volume = volume; // 🔉 Set initial volume
                       audio.play();
                       setBgMusic(audio);
+                      setIsMuted(false); // ensure it's not muted initially
                     } else {
-                      bgMusic.volume = isMuted ? 0 : 1;
+                      bgMusic.volume = isMuted ? 0 : volume;
                       bgMusic.play();
                     }
+                    setConnectModalOpen(true)
                   }}
                 >
                   Play
                 </Button>
               </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.7, y: -20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 140,
+                  damping: 10,
+                  delay: 1.7,
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => {
+                     if (!bgMusic) {
+                     const audio = new Audio(musicFile);
+                      audio.loop = true;
+                      audio.volume = volume; // 🔉 Set initial volume
+                      audio.play();
+                      setBgMusic(audio);
+                      setIsMuted(false); // ensure it's not muted initially
+                    } else {
+                      bgMusic.volume = isMuted ? 0 : volume;
+                      bgMusic.play();
+                    }
+                    setShowHowToPlay(true)}}
+                  style={{ marginTop: 12, ...styles.buttonStyle2 }}
+                >
+                  How To Play
+                </Button>
+
+              </motion.div>
+              </>
             )}
           </>)
           : (<>
@@ -711,6 +802,106 @@ function Main() {
             </Button>
           </Grid>
         </Modal>
+
+
+        <Modal open={showHowToPlay} onClose={() => setShowHowToPlay(false)}>
+  <Grid
+    container
+    xs={11}
+    md={6}
+    lg={4}
+    style={{
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      backgroundColor: '#fff',
+      borderRadius: 12,
+      padding: "32px 24px",
+      boxShadow: "0 0 40px rgba(0,0,0,0.4)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      textAlign: "center",
+      zIndex: 9999
+    }}
+  >
+    <Typography variant="h5" gutterBottom color="primary">
+      How To Play
+    </Typography>
+
+    <Box
+      sx={{
+        width: 175,
+        height: 256,
+        overflow:'hidden',
+        // marginBottom: 2,
+        // backgroundImage: `url(${bearSprite})`,
+        // backgroundSize: "2450px 512px", // 7 * 350 = 2450
+        // backgroundPosition: `-${howToStep === 0 ? 0 : howToStep === 1 ? 700 : howToStep === 2 ? 1400 : 0}px 0`,
+        // backgroundRepeat: "no-repeat",
+        // imageRendering: "pixelated",
+      }}
+    >
+      <img src={bearSprite} alt='' style={{
+        height:'100%',
+        width:'auto',
+        objectFit:'cover',
+        marginLeft:`-${howToStep === 0 ? 0 : howToStep === 1 ? 175 : howToStep === 2 ? 350 : howToStep === 3 ? 700 : howToStep === 4 ? 0 : howToStep === 5 ? 1048 : 0}px`
+      }} />
+
+    </Box>
+
+    <Typography variant="body1" style={{ marginBottom: 24 }}>
+      {[
+        "🕹️ Use LEFT and RIGHT arrow keys (or buttons on mobile) to move Bearish Bear.",
+        "Jump from platform to platform to climb higher.",
+        "Each bounce on a new platform increases your multiplier. Get a big multiplier and celebrate!",
+        "⚠️ Avoid falling, getting hit by obstacles, or hitting bear traps from below.",
+        "🐤 Collect Baby Gugo Ducks & Bearish Bears for bonus points and prizes.",
+        "Climb the leaderboards and win Weekly Prize Pools.",
+      ][howToStep]}
+    </Typography>
+
+    {howToStep === 5 ? (
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => {
+          setShowHowToPlay(false);
+          setHowToStep(0);
+        }}
+        style={{ ...styles.buttonStyle, marginBottom: 8 }}
+      >
+        Got It!
+      </Button>
+    ) : null}
+
+    <MobileStepper
+      variant="dots"
+      steps={6}
+      position="static"
+      activeStep={howToStep}
+      nextButton={
+        howToStep < 5 && (
+          <Button size="small" onClick={() => setHowToStep((prev) => prev + 1)}>
+            Next
+          </Button>
+        )
+      }
+      backButton={
+        <Button
+          size="small"
+          onClick={() => setHowToStep((prev) => Math.max(prev - 1, 0))}
+          disabled={howToStep === 0}
+        >
+          Back
+        </Button>
+      }
+    />
+  </Grid>
+</Modal>
+
 
 
       </Box>
