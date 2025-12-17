@@ -1,6 +1,6 @@
 // /src/Main.jsx
 import React, { useState, useCallback, useEffect, useContext } from "react";
-import { Box, Button, Typography, LinearProgress, Modal, Grid,Tooltip,MobileStepper   } from "@mui/material";
+import { Box, Button, Typography, LinearProgress, Modal, Grid, Tooltip, MobileStepper } from "@mui/material";
 import GameContainer from "./GameContainer";
 import {
   useLoginWithAbstract,
@@ -117,10 +117,10 @@ function Main() {
   }, [message]);
 
   useEffect(() => {
-  if (bgMusic) {
-    bgMusic.volume = isMuted ? 0 : volume;
-  }
-}, [volume, isMuted, bgMusic]);
+    if (bgMusic) {
+      bgMusic.volume = isMuted ? 0 : volume;
+    }
+  }, [volume, isMuted, bgMusic]);
 
 
   useEffect(() => {
@@ -199,6 +199,20 @@ function Main() {
     }
   };
 
+  const ensureMusic = () => {
+    if (!bgMusic) {
+      const audio = new Audio(musicFile);
+      audio.loop = true;
+      audio.volume = volume;
+      audio.play();
+      setBgMusic(audio);
+      setIsMuted(false);
+    } else {
+      bgMusic.volume = isMuted ? 0 : volume;
+      bgMusic.play();
+    }
+  };
+
 
   const styles = {
     buttonStyle: {
@@ -215,7 +229,50 @@ function Main() {
       borderBottom: `3px solid ${Theme.palette.secondary.light}`,
       borderRadius: '100px'
     },
-  }
+
+    squareButton: {
+      borderLeft: `3px solid ${Theme.palette.secondary.dark}`,
+      borderTop: `3px solid ${Theme.palette.secondary.dark}`,
+      borderRight: `3px solid ${Theme.palette.secondary.dark}`,
+      borderBottom: `3px solid ${Theme.palette.secondary.light}`,
+      borderRadius: 12,
+      minWidth: 56,
+      width: 56,
+      height: 56,
+      padding: 0,
+    },
+
+    // ✅ NEW: rectangle button (Solo / Versus)
+    rectButton: {
+      borderLeft: `3px solid ${Theme.palette.secondary.dark}`,
+      borderTop: `3px solid ${Theme.palette.secondary.dark}`,
+      borderRight: `3px solid ${Theme.palette.secondary.dark}`,
+      borderBottom: `3px solid ${Theme.palette.secondary.light}`,
+      borderRadius: 14,
+      height: 56,
+      width: 122,
+      padding: "0 18px",
+      fontWeight: 800,
+      textTransform: "none",
+    },
+    playButton: {
+      borderLeft: `3px solid ${Theme.palette.primary.dark}`,
+      borderTop: `3px solid ${Theme.palette.primary.dark}`,
+      borderRight: `3px solid ${Theme.palette.primary.dark}`,
+      borderBottom: `3px solid ${Theme.palette.primary.light}`,
+      borderRadius: 14,
+      height: 56,
+      width: 122,
+      padding: "0 18px",
+      fontWeight: 800,
+      textTransform: "none",
+    },
+  };
+
+
+
+
+
 
   return (
     <Box
@@ -231,75 +288,75 @@ function Main() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        overflow:'hidden'
+        overflow: 'hidden'
       }}
     >
 
-      {bgMusic && 
-      <Box
-      onClick={() => {
-          if(isMuted){
-            bgMusic.muted = !isMuted;
-            setIsMuted(!isMuted);
-          }
-          
-        }}
-  sx={{
-    position: "absolute",
-    top: {xs: !started ? '20px':'60px', md:'20px' },
-    left: {xs:'10px'},
-    zIndex: 9999,
-    backgroundColor: "#00000088",
-    padding: "6px 12px",
-     borderRadius: '50px',
-     display:'flex',
-     justifyContent:'center',
-     alignItems:'center'
-  }}
->
-  
-  {!isMuted && <>
-  <Tooltip title={`${(volume * 100).toFixed(0)}%`} arrow >
-  <Box display="flex" flexDirection="row" alignItems="center">
-    <Typography color="white" variant="caption">
-      Volume
-    </Typography>
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step="0.01"
-      value={volume}
-      onChange={(e) => setVolume(parseFloat(e.target.value))}
-      style={{ width: 100, marginRight: 4}}
-    />
-  </Box>
-</Tooltip>
-  </>}
-  {isMuted ? <Typography color="white" variant="caption"  style={{cursor:'pointer'}} onClick={() => {
-          
-            bgMusic.muted = !isMuted;
-            setIsMuted(!isMuted);
-          
-          
-        }}>
-    Unmute 🔊
-  </Typography> : 
-  <Tooltip title={"Mute"} arrow >
-    <Typography color="white" style={{cursor:'pointer'}} onClick={() => {
-            
+      {bgMusic &&
+        <Box
+          onClick={() => {
+            if (isMuted) {
               bgMusic.muted = !isMuted;
               setIsMuted(!isMuted);
-            
-            
-          }}>🔇</Typography>
-  </Tooltip>
-        }
-</Box>
+            }
+
+          }}
+          sx={{
+            position: "absolute",
+            top: { xs: !started ? '20px' : '60px', md: '20px' },
+            left: { xs: '10px' },
+            zIndex: 9999,
+            backgroundColor: "#00000088",
+            padding: "6px 12px",
+            borderRadius: '50px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+
+          {!isMuted && <>
+            <Tooltip title={`${(volume * 100).toFixed(0)}%`} arrow >
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Typography color="white" variant="caption">
+                  Volume
+                </Typography>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={(e) => setVolume(parseFloat(e.target.value))}
+                  style={{ width: 100, marginRight: 4 }}
+                />
+              </Box>
+            </Tooltip>
+          </>}
+          {isMuted ? <Typography color="white" variant="caption" style={{ cursor: 'pointer' }} onClick={() => {
+
+            bgMusic.muted = !isMuted;
+            setIsMuted(!isMuted);
+
+
+          }}>
+            Unmute 🔊
+          </Typography> :
+            <Tooltip title={"Mute"} arrow >
+              <Typography color="white" style={{ cursor: 'pointer' }} onClick={() => {
+
+                bgMusic.muted = !isMuted;
+                setIsMuted(!isMuted);
+
+
+              }}>🔇</Typography>
+            </Tooltip>
+          }
+        </Box>
       }
 
 
-      
+
       <img
         src={window.innerWidth < 500 ? require('../assets/mobile-bg.png') : require('../assets/main-bg.png')}
         alt=''
@@ -382,6 +439,162 @@ function Main() {
           filter: started || gameOver ? 'blur(5px)' : 'none',
         }}
       />
+      {(!started || gameOver) && (
+        <>
+          {/* Top-left: Settings */}
+          <Box sx={{ position: "absolute", top: '15%', left: '20%', zIndex: 10 }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              style={styles.squareButton}
+              onClick={() => console.log("Settings")}
+            >
+              <img
+                src={require("../assets/settings_icon.png")}
+                alt="settings"
+                style={{
+                  width: 36,
+                  height: 36,
+                  objectFit: "contain",
+                }}
+              />
+            </Button>
+          </Box>
+
+          {/* Left stack: Leaderboard + Skins */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: '24%',
+              left: '20%',
+              zIndex: 10,
+              display: "flex",
+              flexDirection: "column",
+              gap: 1.5,
+            }}
+          >
+            <Button
+              variant="contained"
+              color="secondary"
+              style={styles.squareButton}
+              onClick={() => setShowLeaderboard(true)}
+            >
+              <img
+                src={require("../assets/trophy2.png")}
+                alt="leaderboards"
+                style={{
+                  width: 36,
+                  height: 36,
+                  objectFit: "contain",
+                }}
+              />
+            </Button>
+
+            <Button
+              variant="contained"
+              color="secondary"
+              style={styles.squareButton}
+              onClick={() => console.log("Skins")}
+            >
+              <img
+                src={require("../assets/shirt_icon.png")}
+                alt="skins"
+                style={{
+                  width: 36,
+                  height: 36,
+                  objectFit: "contain",
+                }}
+              />
+
+            </Button>
+          </Box>
+
+          {/* Top-center: Battle Wallet */}
+          <Box sx={{ position: "absolute", top: '5%', left: "50%", transform: "translateX(-50%)", zIndex: 10, width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              style={{ ...styles.rectButton, marginRight: '2%', }}
+              onClick={() => console.log("Battle Wallet")}
+            >
+              <img
+                src={require("../assets/profile_icon.png")}
+                alt="profile"
+                style={{
+                  width: 36,
+                  height: 36,
+                  objectFit: "contain",
+                }}
+              />
+              USERNAME
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              style={{ ...styles.rectButton, marginRight: '2%' }}
+              onClick={() => console.log("Battle Wallet")}
+            >
+              <img
+                src={require("../assets/battle_wallet.png")}
+                alt="profile"
+                style={{
+                  width: 36,
+                  height: 36,
+                  objectFit: "contain",
+                }}
+              />
+              WALLET
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              style={styles.rectButton}
+              onClick={() => console.log("Battle Wallet")}
+            >
+              <img
+                src={require("../assets/tasks_icon.png")}
+                alt="profile"
+                style={{
+                  width: 36,
+                  height: 36,
+                  objectFit: "contain",
+                }}
+              />
+              QUESTS
+            </Button>
+          </Box>
+
+          {/* Right stack: News */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: '15%',
+              right: '25%',
+              zIndex: 10,
+              display: "flex",
+              flexDirection: "column",
+              gap: 1.5,
+            }}
+          >
+            <Button
+              variant="contained"
+              color="secondary"
+              style={styles.squareButton}
+              onClick={() => console.log("News")}
+            >
+              <img
+                src={require("../assets/mail_icon.png")}
+                alt="profile"
+                style={{
+                  width: 36,
+                  height: 36,
+                  objectFit: "contain",
+                }}
+              />
+            </Button>
+          </Box>
+        </>
+      )}
 
 
 
@@ -495,7 +708,7 @@ function Main() {
             )}
 
 
-            {(agwClient?.account?.address &&  signerStatus && signerStatus !== 'disconnected') ? (
+            {(agwClient?.account?.address && signerStatus && signerStatus !== 'disconnected') ? (
               <>
                 <Button
                   style={{ ...styles.buttonStyle }}
@@ -520,70 +733,84 @@ function Main() {
               </>
             ) : (
               <>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.7, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 140,
-                  damping: 10,
-                  delay: 1.5,
-                }}
-              >
-                <Button
-                  style={{ ...styles.buttonStyle, marginTop: '25%' }}
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    if (!bgMusic) {
-                     const audio = new Audio(musicFile);
-                      audio.loop = true;
-                      audio.volume = volume; // 🔉 Set initial volume
-                      audio.play();
-                      setBgMusic(audio);
-                      setIsMuted(false); // ensure it's not muted initially
-                    } else {
-                      bgMusic.volume = isMuted ? 0 : volume;
-                      bgMusic.play();
-                    }
-                    setConnectModalOpen(true)
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.7, y: -20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 140, damping: 10, delay: 1.5 }}
+                >
+                  <Box sx={{ display: "flex", gap: 1.5, mt: "25%", position: 'relative', top: '60%' }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{ ...styles.playButton, flex: 1 }}
+                      onClick={() => {
+                        ensureMusic();
+                        // Solo = practice mode (free)
+                        setStarted(true);
+                        setGameOver(false);
+                        setHealth(4);
+                        setScore(0);
+                      }}
+                    >
+                      <Typography color={'white'}>
+                        SOLO
+                      </Typography>
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{ ...styles.playButton, flex: 1 }}
+                      onClick={() => {
+                        ensureMusic();
+                        // Versus = wallet connect flow
+                        setConnectModalOpen(true);
+                      }}
+                    >
+                      <Typography color={'white'}>
+                        VERSUS
+                      </Typography>
+
+                    </Button>
+                  </Box>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.7, y: -20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 140,
+                    damping: 10,
+                    delay: 1.7,
                   }}
                 >
-                  Play
-                </Button>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.7, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 140,
-                  damping: 10,
-                  delay: 1.7,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                     if (!bgMusic) {
-                     const audio = new Audio(musicFile);
-                      audio.loop = true;
-                      audio.volume = volume; // 🔉 Set initial volume
-                      audio.play();
-                      setBgMusic(audio);
-                      setIsMuted(false); // ensure it's not muted initially
-                    } else {
-                      bgMusic.volume = isMuted ? 0 : volume;
-                      bgMusic.play();
-                    }
-                    setShowHowToPlay(true)}}
-                  style={{ marginTop: 12, ...styles.buttonStyle2 }}
-                >
-                  How To Play
-                </Button>
+                  <Box sx={{ display: "flex", position: 'relative', top: '130%' }}>
 
-              </motion.div>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => {
+                        if (!bgMusic) {
+                          const audio = new Audio(musicFile);
+                          audio.loop = true;
+                          audio.volume = volume; // 🔉 Set initial volume
+                          audio.play();
+                          setBgMusic(audio);
+                          setIsMuted(false); // ensure it's not muted initially
+                        } else {
+                          bgMusic.volume = isMuted ? 0 : volume;
+                          bgMusic.play();
+                        }
+                        setShowHowToPlay(true)
+                      }}
+                      style={{ marginTop: 12, ...styles.buttonStyle2 }}
+                    >
+                      How To Play
+                    </Button>
+                  </Box>
+
+                </motion.div>
               </>
             )}
           </>)
@@ -805,102 +1032,102 @@ function Main() {
 
 
         <Modal open={showHowToPlay} onClose={() => setShowHowToPlay(false)}>
-  <Grid
-    container
-    xs={11}
-    md={6}
-    lg={4}
-    style={{
-      position: "absolute",
-      left: "50%",
-      top: "50%",
-      transform: "translate(-50%, -50%)",
-      backgroundColor: '#fff',
-      borderRadius: 12,
-      padding: "32px 24px",
-      boxShadow: "0 0 40px rgba(0,0,0,0.4)",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      textAlign: "center",
-      zIndex: 9999
-    }}
-  >
-    <Typography variant="h5" gutterBottom color="primary">
-      How To Play
-    </Typography>
+          <Grid
+            container
+            xs={11}
+            md={6}
+            lg={4}
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              backgroundColor: '#fff',
+              borderRadius: 12,
+              padding: "32px 24px",
+              boxShadow: "0 0 40px rgba(0,0,0,0.4)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              zIndex: 9999
+            }}
+          >
+            <Typography variant="h5" gutterBottom color="primary">
+              How To Play
+            </Typography>
 
-    <Box
-      sx={{
-        width: 175,
-        height: 256,
-        overflow:'hidden',
-        // marginBottom: 2,
-        // backgroundImage: `url(${bearSprite})`,
-        // backgroundSize: "2450px 512px", // 7 * 350 = 2450
-        // backgroundPosition: `-${howToStep === 0 ? 0 : howToStep === 1 ? 700 : howToStep === 2 ? 1400 : 0}px 0`,
-        // backgroundRepeat: "no-repeat",
-        // imageRendering: "pixelated",
-      }}
-    >
-      <img src={bearSprite} alt='' style={{
-        height:'100%',
-        width:'auto',
-        objectFit:'cover',
-        marginLeft:`-${howToStep === 0 ? 0 : howToStep === 1 ? 175 : howToStep === 2 ? 350 : howToStep === 3 ? 700 : howToStep === 4 ? 0 : howToStep === 5 ? 1048 : 0}px`
-      }} />
+            <Box
+              sx={{
+                width: 175,
+                height: 256,
+                overflow: 'hidden',
+                // marginBottom: 2,
+                // backgroundImage: `url(${bearSprite})`,
+                // backgroundSize: "2450px 512px", // 7 * 350 = 2450
+                // backgroundPosition: `-${howToStep === 0 ? 0 : howToStep === 1 ? 700 : howToStep === 2 ? 1400 : 0}px 0`,
+                // backgroundRepeat: "no-repeat",
+                // imageRendering: "pixelated",
+              }}
+            >
+              <img src={bearSprite} alt='' style={{
+                height: '100%',
+                width: 'auto',
+                objectFit: 'cover',
+                marginLeft: `-${howToStep === 0 ? 0 : howToStep === 1 ? 175 : howToStep === 2 ? 350 : howToStep === 3 ? 700 : howToStep === 4 ? 0 : howToStep === 5 ? 1048 : 0}px`
+              }} />
 
-    </Box>
+            </Box>
 
-    <Typography variant="body1" style={{ marginBottom: 24 }}>
-      {[
-        "🕹️ Use LEFT and RIGHT arrow keys (or buttons on mobile) to move Bearish Bear.",
-        "Jump from platform to platform to climb higher.",
-        "Each bounce on a new platform increases your multiplier. Get a big multiplier and celebrate!",
-        "⚠️ Avoid falling, getting hit by obstacles, or hitting bear traps from below.",
-        "🐤 Collect Baby Gugo Ducks & Bearish Bears for bonus points and prizes.",
-        "Climb the leaderboards and win Weekly Prize Pools.",
-      ][howToStep]}
-    </Typography>
+            <Typography variant="body1" style={{ marginBottom: 24 }}>
+              {[
+                "🕹️ Use LEFT and RIGHT arrow keys (or buttons on mobile) to move Bearish Bear.",
+                "Jump from platform to platform to climb higher.",
+                "Each bounce on a new platform increases your multiplier. Get a big multiplier and celebrate!",
+                "⚠️ Avoid falling, getting hit by obstacles, or hitting bear traps from below.",
+                "🐤 Collect Baby Gugo Ducks & Bearish Bears for bonus points and prizes.",
+                "Climb the leaderboards and win Weekly Prize Pools.",
+              ][howToStep]}
+            </Typography>
 
-    {howToStep === 5 ? (
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => {
-          setShowHowToPlay(false);
-          setHowToStep(0);
-        }}
-        style={{ ...styles.buttonStyle, marginBottom: 8 }}
-      >
-        Got It!
-      </Button>
-    ) : null}
+            {howToStep === 5 ? (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  setShowHowToPlay(false);
+                  setHowToStep(0);
+                }}
+                style={{ ...styles.buttonStyle, marginBottom: 8 }}
+              >
+                Got It!
+              </Button>
+            ) : null}
 
-    <MobileStepper
-      variant="dots"
-      steps={6}
-      position="static"
-      activeStep={howToStep}
-      nextButton={
-        howToStep < 5 && (
-          <Button size="small" onClick={() => setHowToStep((prev) => prev + 1)}>
-            Next
-          </Button>
-        )
-      }
-      backButton={
-        <Button
-          size="small"
-          onClick={() => setHowToStep((prev) => Math.max(prev - 1, 0))}
-          disabled={howToStep === 0}
-        >
-          Back
-        </Button>
-      }
-    />
-  </Grid>
-</Modal>
+            <MobileStepper
+              variant="dots"
+              steps={6}
+              position="static"
+              activeStep={howToStep}
+              nextButton={
+                howToStep < 5 && (
+                  <Button size="small" onClick={() => setHowToStep((prev) => prev + 1)}>
+                    Next
+                  </Button>
+                )
+              }
+              backButton={
+                <Button
+                  size="small"
+                  onClick={() => setHowToStep((prev) => Math.max(prev - 1, 0))}
+                  disabled={howToStep === 0}
+                >
+                  Back
+                </Button>
+              }
+            />
+          </Grid>
+        </Modal>
 
 
 
@@ -918,10 +1145,10 @@ function Main() {
             bottom: 5,
             left: "50%",
             transform: "translate(-50%, 0%)",
-            zIndex:1000
+            zIndex: 1000
           }}
         >
-          <Button style={{ ...styles.buttonStyle }} variant="contained" color="primary" onClick={()=>{logout()}}>
+          <Button style={{ ...styles.buttonStyle }} variant="contained" color="primary" onClick={() => { logout() }}>
             Disconnect Wallet
           </Button>
           <Typography variant="caption" color="white">
