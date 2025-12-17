@@ -1,6 +1,15 @@
 // /src/Main.jsx
 import React, { useState, useCallback, useEffect, useContext } from "react";
-import { Box, Button, Typography, LinearProgress, Modal, Grid,Tooltip,MobileStepper   } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  LinearProgress,
+  Modal,
+  Grid,
+  Tooltip,
+  MobileStepper,
+} from "@mui/material";
 import GameContainer from "./GameContainer";
 import {
   useLoginWithAbstract,
@@ -17,15 +26,14 @@ import PRModal from "./game/PRModal";
 import confetti from "canvas-confetti";
 import { MainContext } from "../App";
 import musicFile from "../assets/music.mp3";
-import bearSprite from '../assets/bear-sprite.png'
-
+import bearSprite from "../assets/bear-sprite.png";
+import VsLobbyModal from "../vs/VsLobbyModal";
+import { makePlayerId } from "../vs/vsConstants";
 
 function Main() {
-  const { Theme, bgMusic,
-    setBgMusic,
-    isMuted,
-    setIsMuted } = useContext(MainContext)
-  const [connectModalOpen, setConnectModalOpen] = useState(false)
+  const { Theme, bgMusic, setBgMusic, isMuted, setIsMuted } =
+    useContext(MainContext);
+  const [connectModalOpen, setConnectModalOpen] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [howToStep, setHowToStep] = useState(0);
   const [started, setStarted] = useState(false);
@@ -45,18 +53,20 @@ function Main() {
   const [showPRModal, setShowPRModal] = useState(false);
   const [isNewPR, setIsNewPR] = useState(false);
 
-
   // UI Queues
-  const [platformsReached, setPlatformsReached] = useState(0)
-  const [babyBearsCollected, setBabyBearsCollected] = useState(0)
-  const [babyDucksCollected, setBabyDucksCollected] = useState(0)
-  const [fishCollected, setFishCollected] = useState(0)
-  const [honeyCollected, setHoneyCollected] = useState(0)
-  const [grapesCollected, setGrapesCollected] = useState(0)
+  const [platformsReached, setPlatformsReached] = useState(0);
+  const [babyBearsCollected, setBabyBearsCollected] = useState(0);
+  const [babyDucksCollected, setBabyDucksCollected] = useState(0);
+  const [fishCollected, setFishCollected] = useState(0);
+  const [honeyCollected, setHoneyCollected] = useState(0);
+  const [grapesCollected, setGrapesCollected] = useState(0);
 
   //Music Voulme
   const [volume, setVolume] = useState(0.5); // 🎚️ Range: 0 - 1
 
+  const [gameMode, setGameMode] = useState("solo"); // "solo" | "vs"
+  const [showVsLobby, setShowVsLobby] = useState(false);
+  const [vsMeta, setVsMeta] = useState(null); // { matchId, seed, lockedPlayers }
 
   const handleLeaderboardUpdate = async (walletAddress, score) => {
     const ref = doc(db, "testLeaderboards", walletAddress.toLowerCase());
@@ -117,11 +127,10 @@ function Main() {
   }, [message]);
 
   useEffect(() => {
-  if (bgMusic) {
-    bgMusic.volume = isMuted ? 0 : volume;
-  }
-}, [volume, isMuted, bgMusic]);
-
+    if (bgMusic) {
+      bgMusic.volume = isMuted ? 0 : volume;
+    }
+  }, [volume, isMuted, bgMusic]);
 
   useEffect(() => {
     if (gameOver && signerAddress) {
@@ -199,6 +208,12 @@ function Main() {
     }
   };
 
+  const handleStartVsMatch = ({ matchId, seed, lockedPlayers }) => {
+    setVsMeta({ matchId, seed, lockedPlayers });
+    setGameMode("vs");
+    setShowVsLobby(false);
+    setStarted(true);
+  };
 
   const styles = {
     buttonStyle: {
@@ -206,16 +221,18 @@ function Main() {
       borderTop: `3px solid ${Theme.palette.primary.dark}`,
       borderRight: `3px solid ${Theme.palette.primary.dark}`,
       borderBottom: `3px solid ${Theme.palette.primary.light}`,
-      borderRadius: '100px'
+      borderRadius: "100px",
     },
     buttonStyle2: {
       borderLeft: `3px solid ${Theme.palette.secondary.dark}`,
       borderTop: `3px solid ${Theme.palette.secondary.dark}`,
       borderRight: `3px solid ${Theme.palette.secondary.dark}`,
       borderBottom: `3px solid ${Theme.palette.secondary.light}`,
-      borderRadius: '100px'
+      borderRadius: "100px",
     },
-  }
+  };
+
+  const playerId = makePlayerId(agwClient?.account?.address || signerAddress);
 
   return (
     <Box
@@ -225,165 +242,171 @@ function Main() {
       sx={{
         width: {
           xs: "100dvw",
-          // md: "600px", sm:'400px' 
+          // md: "600px", sm:'400px'
         },
         height: "100dvh",
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        overflow:'hidden'
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        overflow: "hidden",
       }}
     >
-
-      {bgMusic && 
-      <Box
-      onClick={() => {
-          if(isMuted){
-            bgMusic.muted = !isMuted;
-            setIsMuted(!isMuted);
-          }
-          
-        }}
-  sx={{
-    position: "absolute",
-    top: {xs: !started ? '20px':'60px', md:'20px' },
-    left: {xs:'10px'},
-    zIndex: 9999,
-    backgroundColor: "#00000088",
-    padding: "6px 12px",
-     borderRadius: '50px',
-     display:'flex',
-     justifyContent:'center',
-     alignItems:'center'
-  }}
->
-  
-  {!isMuted && <>
-  <Tooltip title={`${(volume * 100).toFixed(0)}%`} arrow >
-  <Box display="flex" flexDirection="row" alignItems="center">
-    <Typography color="white" variant="caption">
-      Volume
-    </Typography>
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step="0.01"
-      value={volume}
-      onChange={(e) => setVolume(parseFloat(e.target.value))}
-      style={{ width: 100, marginRight: 4}}
-    />
-  </Box>
-</Tooltip>
-  </>}
-  {isMuted ? <Typography color="white" variant="caption"  style={{cursor:'pointer'}} onClick={() => {
-          
-            bgMusic.muted = !isMuted;
-            setIsMuted(!isMuted);
-          
-          
-        }}>
-    Unmute 🔊
-  </Typography> : 
-  <Tooltip title={"Mute"} arrow >
-    <Typography color="white" style={{cursor:'pointer'}} onClick={() => {
-            
+      {bgMusic && (
+        <Box
+          onClick={() => {
+            if (isMuted) {
               bgMusic.muted = !isMuted;
               setIsMuted(!isMuted);
-            
-            
-          }}>🔇</Typography>
-  </Tooltip>
-        }
-</Box>
-      }
+            }
+          }}
+          sx={{
+            position: "absolute",
+            top: { xs: !started ? "20px" : "60px", md: "20px" },
+            left: { xs: "10px" },
+            zIndex: 9999,
+            backgroundColor: "#00000088",
+            padding: "6px 12px",
+            borderRadius: "50px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {!isMuted && (
+            <>
+              <Tooltip title={`${(volume * 100).toFixed(0)}%`} arrow>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography color="white" variant="caption">
+                    Volume
+                  </Typography>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={volume}
+                    onChange={(e) => setVolume(parseFloat(e.target.value))}
+                    style={{ width: 100, marginRight: 4 }}
+                  />
+                </Box>
+              </Tooltip>
+            </>
+          )}
+          {isMuted ? (
+            <Typography
+              color="white"
+              variant="caption"
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                bgMusic.muted = !isMuted;
+                setIsMuted(!isMuted);
+              }}
+            >
+              Unmute 🔊
+            </Typography>
+          ) : (
+            <Tooltip title={"Mute"} arrow>
+              <Typography
+                color="white"
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  bgMusic.muted = !isMuted;
+                  setIsMuted(!isMuted);
+                }}
+              >
+                🔇
+              </Typography>
+            </Tooltip>
+          )}
+        </Box>
+      )}
 
-
-      
       <img
-        src={window.innerWidth < 500 ? require('../assets/mobile-bg.png') : require('../assets/main-bg.png')}
-        alt=''
+        src={
+          window.innerWidth < 500
+            ? require("../assets/mobile-bg.png")
+            : require("../assets/main-bg.png")
+        }
+        alt=""
         style={{
-          position: 'absolute',
-          alignItemsn: 'center',
-          justifyContent: 'center',
-          tranform: 'translate(-50%. -50%)',
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
+          position: "absolute",
+          alignItemsn: "center",
+          justifyContent: "center",
+          tranform: "translate(-50%. -50%)",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
           zIndex: 0,
-          filter: started || gameOver ? 'blur(5px)' : 'none'
-        }} />
-
+          filter: started || gameOver ? "blur(5px)" : "none",
+        }}
+      />
 
       {/* 🐤 Baby Duck - fade in + slide from left */}
       <motion.img
-        src={require('../assets/main-babyduck.png')}
+        src={require("../assets/main-babyduck.png")}
         alt="baby duck"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1.6, delay: .4 }}
+        transition={{ duration: 1.6, delay: 0.4 }}
         style={{
-          position: 'absolute',
-          left: window.innerWidth < 500 ? '-35%' : 0,
-          top: window.innerWidth < 500 ? '6.5%' : 0,
-          width: window.innerWidth < 500 ? 'auto' : '100%',
-          height: '100%',
-          objectFit: 'cover',
+          position: "absolute",
+          left: window.innerWidth < 500 ? "-35%" : 0,
+          top: window.innerWidth < 500 ? "6.5%" : 0,
+          width: window.innerWidth < 500 ? "auto" : "100%",
+          height: "100%",
+          objectFit: "cover",
           zIndex: 0,
-          filter: started || gameOver ? 'blur(5px)' : 'none',
+          filter: started || gameOver ? "blur(5px)" : "none",
         }}
       />
       {/* 🐻 Baby Bear - fade in + slide from left */}
       <motion.img
-        src={require('../assets/main-bear.png')}
+        src={require("../assets/main-bear.png")}
         alt=""
         initial={{ opacity: 0, y: -120 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.6, delay: .7 }}
+        transition={{ duration: 1.6, delay: 0.7 }}
         style={{
-          position: 'absolute',
-          width: window.innerWidth < 500 ? 'auto' : '100%',
-          height: '100%',
-          objectFit: 'cover',
+          position: "absolute",
+          width: window.innerWidth < 500 ? "auto" : "100%",
+          height: "100%",
+          objectFit: "cover",
           zIndex: 0,
-          filter: started || gameOver ? 'blur(5px)' : 'none',
+          filter: started || gameOver ? "blur(5px)" : "none",
         }}
       />
 
       <motion.img
-        src={require('../assets/main-duck.png')}
+        src={require("../assets/main-duck.png")}
         alt="duck"
         initial={{ opacity: 0, x: 120 }}
         animate={{ opacity: 1, x: window.innerWidth < 500 ? -180 : 0 }}
         transition={{ duration: 1.5, delay: 1.2 }}
         style={{
-          position: 'absolute',
-          width: window.innerWidth < 500 ? 'auto' : '100%',
-          height: '100%',
-          objectFit: 'cover',
+          position: "absolute",
+          width: window.innerWidth < 500 ? "auto" : "100%",
+          height: "100%",
+          objectFit: "cover",
           zIndex: 0,
-          filter: started || gameOver ? 'blur(5px)' : 'none',
+          filter: started || gameOver ? "blur(5px)" : "none",
         }}
       />
 
       <motion.img
-        src={require('../assets/main-bearr.png')}
+        src={require("../assets/main-bearr.png")}
         alt=""
         initial={{ opacity: 0, x: 120 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1.4, delay: 1.2 }}
         style={{
-          position: 'absolute',
-          width: window.innerWidth < 500 ? 'auto' : '100%',
-          height: '100%',
-          objectFit: 'cover',
+          position: "absolute",
+          width: window.innerWidth < 500 ? "auto" : "100%",
+          height: "100%",
+          objectFit: "cover",
           zIndex: 0,
-          filter: started || gameOver ? 'blur(5px)' : 'none',
+          filter: started || gameOver ? "blur(5px)" : "none",
         }}
       />
-
-
 
       {/* 🔐 AGW Connect Button */}
 
@@ -393,15 +416,19 @@ function Main() {
         alignItems="center"
         justifyContent="center"
         height="100%"
-        sx={{ width: { xs: '100%', md: '600px' }, borderRight: (started && window.innerWidth > 600) && '3px solid white', borderLeft: (started && window.innerWidth > 600) && '3px solid white' }}
+        sx={{
+          width: { xs: "100%", md: "600px" },
+          borderRight: started && window.innerWidth > 600 && "3px solid white",
+          borderLeft: started && window.innerWidth > 600 && "3px solid white",
+        }}
         style={{
           zIndex: 1,
           containerType: "inline-size",
-          position: 'relative'
+          position: "relative",
         }}
       >
-        {!started || gameOver ?
-          (<>
+        {!started || gameOver ? (
+          <>
             {gameOver ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.6 }}
@@ -467,7 +494,7 @@ function Main() {
                   color: Theme.palette.text.light,
                   marginBottom: "16px",
                   textAlign: "center",
-                  border: "#B96E1E solid 2px"
+                  border: "#B96E1E solid 2px",
                 }}
                 animate={{
                   boxShadow: [
@@ -482,20 +509,37 @@ function Main() {
                   ease: "easeInOut",
                 }}
               >
-                <Typography variant="h6" style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`, }}>
+                <Typography
+                  variant="h6"
+                  style={{
+                    textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`,
+                  }}
+                >
                   Test Challenge Bonus!
                 </Typography>
-                <Typography variant="body1" style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`, }}>
+                <Typography
+                  variant="body1"
+                  style={{
+                    textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`,
+                  }}
+                >
                   Reward: 0.1 Test ETH
                 </Typography>
-                <Typography variant="body2" style={{ color: Theme.palette.text.light, textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000` }}>
+                <Typography
+                  variant="body2"
+                  style={{
+                    color: Theme.palette.text.light,
+                    textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`,
+                  }}
+                >
                   Reach 10,000,000 points in one run to claim!
                 </Typography>
               </motion.div>
             )}
 
-
-            {(agwClient?.account?.address &&  signerStatus && signerStatus !== 'disconnected') ? (
+            {agwClient?.account?.address &&
+            signerStatus &&
+            signerStatus !== "disconnected" ? (
               <>
                 <Button
                   style={{ ...styles.buttonStyle }}
@@ -516,78 +560,102 @@ function Main() {
                 >
                   {gameOver ? "Restart" : "Start Game .0001 eth"}
                 </Button>
+                <Button
+                  style={styles.buttonStyle}
+                  variant="contained"
+                  onClick={() => {
+                    setGameMode("solo");
+                    setStarted(true);
+                  }}
+                >
+                  SOLO
+                </Button>
 
+                <Button
+                  style={styles.buttonStyle}
+                  variant="outlined"
+                  onClick={() => {
+                    if (!playerId) {
+                      alert("Connect wallet first.");
+                      return;
+                    }
+                    setShowVsLobby(true);
+                  }}
+                >
+                  VS
+                </Button>
               </>
             ) : (
               <>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.7, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 140,
-                  damping: 10,
-                  delay: 1.5,
-                }}
-              >
-                <Button
-                  style={{ ...styles.buttonStyle, marginTop: '25%' }}
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    if (!bgMusic) {
-                     const audio = new Audio(musicFile);
-                      audio.loop = true;
-                      audio.volume = volume; // 🔉 Set initial volume
-                      audio.play();
-                      setBgMusic(audio);
-                      setIsMuted(false); // ensure it's not muted initially
-                    } else {
-                      bgMusic.volume = isMuted ? 0 : volume;
-                      bgMusic.play();
-                    }
-                    setConnectModalOpen(true)
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.7, y: -20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 140,
+                    damping: 10,
+                    delay: 1.5,
                   }}
                 >
-                  Play
-                </Button>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.7, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 140,
-                  damping: 10,
-                  delay: 1.7,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                     if (!bgMusic) {
-                     const audio = new Audio(musicFile);
-                      audio.loop = true;
-                      audio.volume = volume; // 🔉 Set initial volume
-                      audio.play();
-                      setBgMusic(audio);
-                      setIsMuted(false); // ensure it's not muted initially
-                    } else {
-                      bgMusic.volume = isMuted ? 0 : volume;
-                      bgMusic.play();
-                    }
-                    setShowHowToPlay(true)}}
-                  style={{ marginTop: 12, ...styles.buttonStyle2 }}
+                  <Button
+                    style={{ ...styles.buttonStyle, marginTop: "25%" }}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      if (!bgMusic) {
+                        const audio = new Audio(musicFile);
+                        audio.loop = true;
+                        audio.volume = volume; // 🔉 Set initial volume
+                        audio.play();
+                        setBgMusic(audio);
+                        setIsMuted(false); // ensure it's not muted initially
+                      } else {
+                        bgMusic.volume = isMuted ? 0 : volume;
+                        bgMusic.play();
+                      }
+                      setConnectModalOpen(true);
+                    }}
+                  >
+                    Play
+                  </Button>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.7, y: -20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 140,
+                    damping: 10,
+                    delay: 1.7,
+                  }}
                 >
-                  How To Play
-                </Button>
-
-              </motion.div>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      if (!bgMusic) {
+                        const audio = new Audio(musicFile);
+                        audio.loop = true;
+                        audio.volume = volume; // 🔉 Set initial volume
+                        audio.play();
+                        setBgMusic(audio);
+                        setIsMuted(false); // ensure it's not muted initially
+                      } else {
+                        bgMusic.volume = isMuted ? 0 : volume;
+                        bgMusic.play();
+                      }
+                      setShowHowToPlay(true);
+                    }}
+                    style={{ marginTop: 12, ...styles.buttonStyle2 }}
+                  >
+                    How To Play
+                  </Button>
+                </motion.div>
               </>
             )}
-          </>)
-          : (<>
+          </>
+        ) : (
+          <>
             {/* 🎯 Message Overlay */}
             <AnimatePresence>
               {message && (
@@ -634,7 +702,16 @@ function Main() {
             </AnimatePresence>
 
             {/* 🎯 Health Bar Overlay */}
-            <Box position="absolute" top={5} left={20} width={200} zIndex={1} style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000` }}>
+            <Box
+              position="absolute"
+              top={5}
+              left={20}
+              width={200}
+              zIndex={1}
+              style={{
+                textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`,
+              }}
+            >
               <Typography color="white" variant="body2">
                 Health: {health}/4
               </Typography>
@@ -647,10 +724,22 @@ function Main() {
             </Box>
             {/* 🏆 Score Overlay (top-right) */}
             <Box position="absolute" top={20} right={20} zIndex={1}>
-              <Typography color="white" variant="body2" style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000` }}>
+              <Typography
+                color="white"
+                variant="body2"
+                style={{
+                  textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`,
+                }}
+              >
                 Score: {score}
               </Typography>
-              <Typography color="white" variant="body2" style={{ textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000` }}>
+              <Typography
+                color="white"
+                variant="body2"
+                style={{
+                  textShadow: `-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000`,
+                }}
+              >
                 Multiplier: x{multiplier}
               </Typography>
             </Box>
@@ -667,7 +756,7 @@ function Main() {
                   bottom: 70,
                   left: "50%",
                   transform: "translateX(-50%)",
-                  display: { xs: 'flex', md: 'none' },
+                  display: { xs: "flex", md: "none" },
                   width: "98%",
                   height: "60px",
                   backgroundColor: "#222",
@@ -689,16 +778,32 @@ function Main() {
                     "&:active": { backgroundColor: "#555" },
                   }}
                   onTouchStart={() => {
-                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: -1 } }));
+                    window.dispatchEvent(
+                      new CustomEvent("sliderMove", {
+                        detail: { direction: -1 },
+                      })
+                    );
                   }}
                   onTouchEnd={() => {
-                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
+                    window.dispatchEvent(
+                      new CustomEvent("sliderMove", {
+                        detail: { direction: 0 },
+                      })
+                    );
                   }}
                   onMouseDown={() => {
-                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: -1 } }));
+                    window.dispatchEvent(
+                      new CustomEvent("sliderMove", {
+                        detail: { direction: -1 },
+                      })
+                    );
                   }}
                   onMouseUp={() => {
-                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
+                    window.dispatchEvent(
+                      new CustomEvent("sliderMove", {
+                        detail: { direction: 0 },
+                      })
+                    );
                   }}
                 >
                   ← Left
@@ -715,27 +820,45 @@ function Main() {
                     "&:active": { backgroundColor: "#555" },
                   }}
                   onTouchStart={() => {
-                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 1 } }));
+                    window.dispatchEvent(
+                      new CustomEvent("sliderMove", {
+                        detail: { direction: 1 },
+                      })
+                    );
                   }}
                   onTouchEnd={() => {
-                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
+                    window.dispatchEvent(
+                      new CustomEvent("sliderMove", {
+                        detail: { direction: 0 },
+                      })
+                    );
                   }}
                   onMouseDown={() => {
-                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 1 } }));
+                    window.dispatchEvent(
+                      new CustomEvent("sliderMove", {
+                        detail: { direction: 1 },
+                      })
+                    );
                   }}
                   onMouseUp={() => {
-                    window.dispatchEvent(new CustomEvent("sliderMove", { detail: { direction: 0 } }));
+                    window.dispatchEvent(
+                      new CustomEvent("sliderMove", {
+                        detail: { direction: 0 },
+                      })
+                    );
                   }}
                 >
                   Right →
                 </Button>
               </Box>
-
             )}
-          </>)
-        }
+          </>
+        )}
 
-        <Modal open={!!connectModalOpen} onClose={() => setConnectModalOpen(false)}>
+        <Modal
+          open={!!connectModalOpen}
+          onClose={() => setConnectModalOpen(false)}
+        >
           <Grid
             container
             xs={11}
@@ -746,7 +869,7 @@ function Main() {
               left: "50%",
               top: "50%",
               transform: "translate(-50%, -50%)",
-              backgroundColor: '#fff',
+              backgroundColor: "#fff",
               borderRadius: 12,
               padding: "32px 24px",
               boxShadow: "0 0 40px rgba(0,0,0,0.4)",
@@ -754,16 +877,24 @@ function Main() {
               flexDirection: "column",
               alignItems: "center",
               textAlign: "center",
-              zIndex: 9999
+              zIndex: 9999,
             }}
           >
             <Typography variant="h5" gutterBottom color="primary" style={{}}>
               Connect Your Wallet
             </Typography>
 
-            <Typography variant="body1" style={{ marginBottom: "24px", color: Theme.palette.text.secondary, }}>
-              To play the game and compete for rewards, you'll need to connect your wallet and pay with $ETH.
-              <br /><br />
+            <Typography
+              variant="body1"
+              style={{
+                marginBottom: "24px",
+                color: Theme.palette.text.secondary,
+              }}
+            >
+              To play the game and compete for rewards, you'll need to connect
+              your wallet and pay with $ETH.
+              <br />
+              <br />
               Or click **Practice** below to try it out for free!
             </Typography>
 
@@ -803,135 +934,161 @@ function Main() {
           </Grid>
         </Modal>
 
-
         <Modal open={showHowToPlay} onClose={() => setShowHowToPlay(false)}>
-  <Grid
-    container
-    xs={11}
-    md={6}
-    lg={4}
-    style={{
-      position: "absolute",
-      left: "50%",
-      top: "50%",
-      transform: "translate(-50%, -50%)",
-      backgroundColor: '#fff',
-      borderRadius: 12,
-      padding: "32px 24px",
-      boxShadow: "0 0 40px rgba(0,0,0,0.4)",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      textAlign: "center",
-      zIndex: 9999
-    }}
-  >
-    <Typography variant="h5" gutterBottom color="primary">
-      How To Play
-    </Typography>
+          <Grid
+            container
+            xs={11}
+            md={6}
+            lg={4}
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              backgroundColor: "#fff",
+              borderRadius: 12,
+              padding: "32px 24px",
+              boxShadow: "0 0 40px rgba(0,0,0,0.4)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              zIndex: 9999,
+            }}
+          >
+            <Typography variant="h5" gutterBottom color="primary">
+              How To Play
+            </Typography>
 
-    <Box
-      sx={{
-        width: 175,
-        height: 256,
-        overflow:'hidden',
-        // marginBottom: 2,
-        // backgroundImage: `url(${bearSprite})`,
-        // backgroundSize: "2450px 512px", // 7 * 350 = 2450
-        // backgroundPosition: `-${howToStep === 0 ? 0 : howToStep === 1 ? 700 : howToStep === 2 ? 1400 : 0}px 0`,
-        // backgroundRepeat: "no-repeat",
-        // imageRendering: "pixelated",
-      }}
-    >
-      <img src={bearSprite} alt='' style={{
-        height:'100%',
-        width:'auto',
-        objectFit:'cover',
-        marginLeft:`-${howToStep === 0 ? 0 : howToStep === 1 ? 175 : howToStep === 2 ? 350 : howToStep === 3 ? 700 : howToStep === 4 ? 0 : howToStep === 5 ? 1048 : 0}px`
-      }} />
+            <Box
+              sx={{
+                width: 175,
+                height: 256,
+                overflow: "hidden",
+                // marginBottom: 2,
+                // backgroundImage: `url(${bearSprite})`,
+                // backgroundSize: "2450px 512px", // 7 * 350 = 2450
+                // backgroundPosition: `-${howToStep === 0 ? 0 : howToStep === 1 ? 700 : howToStep === 2 ? 1400 : 0}px 0`,
+                // backgroundRepeat: "no-repeat",
+                // imageRendering: "pixelated",
+              }}
+            >
+              <img
+                src={bearSprite}
+                alt=""
+                style={{
+                  height: "100%",
+                  width: "auto",
+                  objectFit: "cover",
+                  marginLeft: `-${
+                    howToStep === 0
+                      ? 0
+                      : howToStep === 1
+                      ? 175
+                      : howToStep === 2
+                      ? 350
+                      : howToStep === 3
+                      ? 700
+                      : howToStep === 4
+                      ? 0
+                      : howToStep === 5
+                      ? 1048
+                      : 0
+                  }px`,
+                }}
+              />
+            </Box>
 
-    </Box>
+            <Typography variant="body1" style={{ marginBottom: 24 }}>
+              {
+                [
+                  "🕹️ Use LEFT and RIGHT arrow keys (or buttons on mobile) to move Bearish Bear.",
+                  "Jump from platform to platform to climb higher.",
+                  "Each bounce on a new platform increases your multiplier. Get a big multiplier and celebrate!",
+                  "⚠️ Avoid falling, getting hit by obstacles, or hitting bear traps from below.",
+                  "🐤 Collect Baby Gugo Ducks & Bearish Bears for bonus points and prizes.",
+                  "Climb the leaderboards and win Weekly Prize Pools.",
+                ][howToStep]
+              }
+            </Typography>
 
-    <Typography variant="body1" style={{ marginBottom: 24 }}>
-      {[
-        "🕹️ Use LEFT and RIGHT arrow keys (or buttons on mobile) to move Bearish Bear.",
-        "Jump from platform to platform to climb higher.",
-        "Each bounce on a new platform increases your multiplier. Get a big multiplier and celebrate!",
-        "⚠️ Avoid falling, getting hit by obstacles, or hitting bear traps from below.",
-        "🐤 Collect Baby Gugo Ducks & Bearish Bears for bonus points and prizes.",
-        "Climb the leaderboards and win Weekly Prize Pools.",
-      ][howToStep]}
-    </Typography>
+            {howToStep === 5 ? (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  setShowHowToPlay(false);
+                  setHowToStep(0);
+                }}
+                style={{ ...styles.buttonStyle, marginBottom: 8 }}
+              >
+                Got It!
+              </Button>
+            ) : null}
 
-    {howToStep === 5 ? (
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => {
-          setShowHowToPlay(false);
-          setHowToStep(0);
-        }}
-        style={{ ...styles.buttonStyle, marginBottom: 8 }}
-      >
-        Got It!
-      </Button>
-    ) : null}
-
-    <MobileStepper
-      variant="dots"
-      steps={6}
-      position="static"
-      activeStep={howToStep}
-      nextButton={
-        howToStep < 5 && (
-          <Button size="small" onClick={() => setHowToStep((prev) => prev + 1)}>
-            Next
-          </Button>
-        )
-      }
-      backButton={
-        <Button
-          size="small"
-          onClick={() => setHowToStep((prev) => Math.max(prev - 1, 0))}
-          disabled={howToStep === 0}
-        >
-          Back
-        </Button>
-      }
-    />
-  </Grid>
-</Modal>
-
-
-
+            <MobileStepper
+              variant="dots"
+              steps={6}
+              position="static"
+              activeStep={howToStep}
+              nextButton={
+                howToStep < 5 && (
+                  <Button
+                    size="small"
+                    onClick={() => setHowToStep((prev) => prev + 1)}
+                  >
+                    Next
+                  </Button>
+                )
+              }
+              backButton={
+                <Button
+                  size="small"
+                  onClick={() => setHowToStep((prev) => Math.max(prev - 1, 0))}
+                  disabled={howToStep === 0}
+                >
+                  Back
+                </Button>
+              }
+            />
+          </Grid>
+        </Modal>
       </Box>
 
-
-      {(agwClient?.account?.address && signerStatus && signerStatus !== 'disconnected') && (
-        <Box
-          style={{
-            width: "90%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            position: "absolute",
-            bottom: 5,
-            left: "50%",
-            transform: "translate(-50%, 0%)",
-            zIndex:1000
-          }}
-        >
-          <Button style={{ ...styles.buttonStyle }} variant="contained" color="primary" onClick={()=>{logout()}}>
-            Disconnect Wallet
-          </Button>
-          <Typography variant="caption" color="white">
-            Address:{" "}
-            {agwClient.account.address.slice(0, 8) +
-              "....." +
-              agwClient.account.address.slice(-3)}
-          </Typography>
-        </Box>
-      )}
+      {agwClient?.account?.address &&
+        signerStatus &&
+        signerStatus !== "disconnected" && (
+          <Box
+            style={{
+              width: "90%",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              position: "absolute",
+              bottom: 5,
+              left: "50%",
+              transform: "translate(-50%, 0%)",
+              zIndex: 1000,
+            }}
+          >
+            <Button
+              style={{ ...styles.buttonStyle }}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                logout();
+              }}
+            >
+              Disconnect Wallet
+            </Button>
+            <Typography variant="caption" color="white">
+              Address:{" "}
+              {agwClient.account.address.slice(0, 8) +
+                "....." +
+                agwClient.account.address.slice(-3)}
+            </Typography>
+          </Box>
+        )}
 
       {showUsernameModal && (
         <UsernameModal
@@ -950,7 +1107,6 @@ function Main() {
         <Leaderboard
           styles={styles}
           playerAddress={signerAddress}
-
           onPlayAgain={async () => {
             console.log("AGW Client before pay-to-play:", agwClient);
             //   setStarted(true);
@@ -977,6 +1133,13 @@ function Main() {
           }}
         />
       )}
+
+      <VsLobbyModal
+        open={showVsLobby}
+        onClose={() => setShowVsLobby(false)}
+        playerId={playerId}
+        onStartMatch={handleStartVsMatch}
+      />
     </Box>
   );
 }
