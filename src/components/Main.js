@@ -9,6 +9,8 @@ import {
   Grid,
   Tooltip,
   MobileStepper,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import GameContainer from "./GameContainer";
 import {
@@ -29,6 +31,11 @@ import musicFile from "../assets/music.mp3";
 import bearSprite from "../assets/bear-sprite.png";
 import VsLobbyModal from "../vs/VsLobbyModal";
 import { makePlayerId } from "../vs/vsConstants";
+import BattleWalletModal from "./BattleWalletModal";
+import PlayerInfoModal from "./PlayerInfoModal";
+import SettingsModal from "./SettingsModal";
+
+
 
 function Main() {
   const { Theme, bgMusic, setBgMusic, isMuted, setIsMuted } =
@@ -67,6 +74,21 @@ function Main() {
   const [gameMode, setGameMode] = useState("solo"); // "solo" | "vs"
   const [showVsLobby, setShowVsLobby] = useState(false);
   const [vsMeta, setVsMeta] = useState(null); // { matchId, seed, lockedPlayers }
+  const [showBattleWallet, setShowBattleWallet] = useState(false);
+  const [showPlayerInfo, setShowPlayerInfo] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+
+
+
+
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+  });
+
+
+
+
 
   const handleLeaderboardUpdate = async (walletAddress, score) => {
     const ref = doc(db, "testLeaderboards", walletAddress.toLowerCase());
@@ -88,6 +110,11 @@ function Main() {
 
     console.log("🏁 Leaderboard updated:", { newTotal, newPR, newLives });
   };
+
+  const showToast = (message) => {
+    setToast({ open: true, message });
+  };
+
 
   const { address: signerAddress, status: signerStatus } =
     useGlobalWalletSignerAccount();
@@ -283,7 +310,7 @@ function Main() {
       textTransform: "none",
     },
   };
-  
+
 
   const playerId = makePlayerId(agwClient?.account?.address || signerAddress);
 
@@ -425,7 +452,7 @@ function Main() {
         }}
       />
 
-      <motion.img
+      {/* <motion.img
         src={require("../assets/main-duck.png")}
         alt="duck"
         initial={{ opacity: 0, x: 120 }}
@@ -439,10 +466,10 @@ function Main() {
           zIndex: 0,
           filter: started || gameOver ? "blur(5px)" : "none",
         }}
-      />
+      /> */}
 
       <motion.img
-        src={require("../assets/main-bearr.png")}
+        src={require("../assets/main-berry.png")}
         alt=""
         initial={{ opacity: 0, x: 120 }}
         animate={{ opacity: 1, x: 0 }}
@@ -464,7 +491,8 @@ function Main() {
               variant="contained"
               color="secondary"
               style={styles.squareButton}
-              onClick={() => console.log("Settings")}
+              onClick={() => setShowSettings(true)}
+
             >
               <img
                 src={require("../assets/settings_icon.png")}
@@ -511,7 +539,8 @@ function Main() {
               variant="contained"
               color="secondary"
               style={styles.squareButton}
-              onClick={() => console.log("Skins")}
+              onClick={() => showToast("Skins coming soon")}
+
             >
               <img
                 src={require("../assets/shirt_icon.png")}
@@ -532,7 +561,8 @@ function Main() {
               variant="contained"
               color="secondary"
               style={{ ...styles.rectButton, marginRight: '2%', }}
-              onClick={() => console.log("Battle Wallet")}
+              onClick={() => setShowPlayerInfo(true)}
+
             >
               <img
                 src={require("../assets/profile_icon.png")}
@@ -549,7 +579,7 @@ function Main() {
               variant="contained"
               color="secondary"
               style={{ ...styles.rectButton, marginRight: '2%' }}
-              onClick={() => console.log("Battle Wallet")}
+              onClick={() => setShowBattleWallet(true)}
             >
               <img
                 src={require("../assets/battle_wallet.png")}
@@ -566,7 +596,7 @@ function Main() {
               variant="contained"
               color="secondary"
               style={styles.rectButton}
-              onClick={() => console.log("Battle Wallet")}
+              onClick={() => showToast("Quests coming soon")}
             >
               <img
                 src={require("../assets/tasks_icon.png")}
@@ -774,7 +804,7 @@ function Main() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 140, damping: 10, delay: 1.5 }}
                 >
-                  <Box sx={{ display: "flex", gap: 1.5, mt: "25%", position: 'relative', top: '60%' }}>
+                  <Box sx={{ display: "flex", gap: 1.5, mt: "25%", position: 'relative', top: '-10%' }}>
                     <Button
                       variant="contained"
                       color="primary"
@@ -806,14 +836,14 @@ function Main() {
                         }
                         setShowVsLobby(true);
                       }}
-                       
+
                     >
                       <Typography color={'white'}>
                         VERSUS
                       </Typography>
 
                     </Button>
-                   
+
                   </Box>
                 </motion.div>
 
@@ -827,7 +857,7 @@ function Main() {
                     delay: 1.7,
                   }}
                 >
-                  <Box sx={{ display: "flex", position: 'relative', top: '130%' }}>
+                  <Box sx={{ display: "flex", position: 'relative', top: '-20%' }}>
 
                     <Button
                       variant="contained"
@@ -1317,12 +1347,48 @@ function Main() {
         />
       )}
 
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={2000}
+        onClose={() => setToast({ ...toast, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          severity="info"
+          variant="filled"
+          sx={{
+            fontWeight: 900,
+            borderRadius: 2,
+            backgroundColor: Theme.palette.secondary.main,
+            color: Theme.palette.text.light,
+            border: `2px solid ${Theme.palette.secondary.dark}`,
+            textShadow:
+              "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+          }}
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
+
       <VsLobbyModal
         open={showVsLobby}
         onClose={() => setShowVsLobby(false)}
         playerId={playerId}
         onStartMatch={handleStartVsMatch}
       />
+      <BattleWalletModal
+        open={showBattleWallet}
+        onClose={() => setShowBattleWallet(false)}
+      />
+      <PlayerInfoModal
+        open={showPlayerInfo}
+        onClose={() => setShowPlayerInfo(false)}
+      />
+      <SettingsModal
+        open={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
+
     </Box>
   );
 }
